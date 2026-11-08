@@ -61,13 +61,24 @@ Purrloader runs FFmpeg as a separate program and does not link to it.
 
 ## Bundled with the Windows and Linux app
 
-The Windows and Linux app (`electron/` in this repository) ships with these, each under its own license:
+The Windows and Linux app (`desktop/`) statically links Rust libraries. Packages include a generated
+`THIRD_PARTY_LICENSES.html` with the full license texts for the resolved dependencies in `Cargo.lock`.
+The principal components are:
 
-- [Electron](https://www.electronjs.org), which includes Chromium and Node.js: [MIT](https://github.com/electron/electron/blob/main/LICENSE).
-  The licenses of Chromium's components are in the `LICENSES.chromium.html` file next to the app.
-- [Preact](https://preactjs.com): [MIT](https://github.com/preactjs/preact/blob/main/LICENSE)
-- [htm](https://github.com/developit/htm): [Apache 2.0](https://github.com/developit/htm/blob/master/LICENSE)
-- [yauzl](https://github.com/thejoshwolfe/yauzl), which unpacks the helper tools: [MIT](https://github.com/thejoshwolfe/yauzl/blob/master/LICENSE)
+- [egui / eframe](https://github.com/emilk/egui): native interface and rendering (MIT / Apache-2.0).
+- [winit](https://github.com/rust-windowing/winit) and [glutin](https://github.com/rust-windowing/glutin): windows and graphics context (Apache-2.0 / MIT).
+- [tray-icon](https://github.com/tauri-apps/tray-icon), [muda](https://github.com/tauri-apps/muda) and
+  [ksni](https://github.com/iovxw/ksni): native menus and Linux StatusNotifier support (MIT / Apache-2.0).
+- [reqwest](https://github.com/seanmonstar/reqwest) and [rustls](https://github.com/rustls/rustls): HTTPS downloads (MIT / Apache-2.0 / ISC).
+- [serde](https://github.com/serde-rs/serde): settings and metadata decoding (MIT / Apache-2.0).
+- [rfd](https://github.com/PolyMeilex/rfd), [arboard](https://github.com/1Password/arboard) and
+  [notify-rust](https://github.com/hoodie/notify-rust): file dialogs, clipboard and notifications.
+- [image](https://github.com/image-rs/image), [zip](https://github.com/zip-rs/zip2),
+  [tar](https://github.com/alexcrichton/tar-rs) and [xz2](https://github.com/alexcrichton/xz2-rs): image and archive decoding.
+- [resvg](https://github.com/linebender/resvg): icon rendering (Apache-2.0 / MIT).
 - [Inter](https://rsms.me/inter/), the typeface, by Rasmus Andersson: [SIL Open Font License 1.1](https://github.com/rsms/inter/blob/master/LICENSE.txt).
   Apple's San Francisco fonts and SF Symbols may only be used on Apple platforms, so the Windows and Linux app
-  uses Inter and its own drawings of the icons.
+  uses Inter and its own drawings of the icons. egui's bundled fallback fonts (Ubuntu, Hack, Noto Emoji) are
+  covered by the dependency license report.
+
+FFmpeg, yt-dlp and Deno remain separate, downloaded helper programs.

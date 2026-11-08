@@ -17,50 +17,71 @@ permissions:
 
 jobs:
   build:
-    name: Build for ${{ matrix.name }}
+    name: Rust build (${{ matrix.name }})
     strategy:
       fail-fast: false
       matrix:
         include:
-          - name: Windows
+          - name: windows-x64
             os: windows-latest
-            target: --win
-          - name: Linux
-            os: ubuntu-latest
-            target: --linux
+            arch: x64
+            triple: x86_64-pc-windows-msvc
+          - name: windows-arm64
+            os: windows-11-arm
+            arch: arm64
+            triple: aarch64-pc-windows-msvc
+          - name: linux-x64
+            os: ubuntu-22.04
+            arch: x64
+            triple: x86_64-unknown-linux-gnu
+          - name: linux-arm64
+            os: ubuntu-22.04-arm
+            arch: arm64
+            triple: aarch64-unknown-linux-gnu
     runs-on: ${{ matrix.os }}
-    defaults:
-      run:
-        working-directory: electron
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: electron/package-lock.json
-
-      - name: Install
-        run: npm ci
-
-      - name: Test
-        run: npm test
-
-      - name: Build
+          ref: ${{ inputs.tag || github.ref }}
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Linux build dependencies
+        if: runner.os == 'Linux'
         run: |
-          node scripts/sync-version.mjs
-          npx electron-builder ${{ matrix.target }} --publish never
-
+          sudo apt-get update
+          sudo apt-get install -y build-essential pkg-config libssl-dev libxkbcommon-dev libwayland-dev libx11-dev libxcb-shape0-dev libxcb-xfixes0-dev libgl1-mesa-dev liblzma-dev squashfs-tools desktop-file-utils
+      - name: Windows installer tools
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "${env:ProgramFiles(x86)}/NSIS/makensis.exe")) { choco install nsis -y --no-progress }
+      - name: Test
+        run: cargo test --locked --all-features
+      - name: Build
+        run: cargo build --locked --release --bin purrloader --target ${{ matrix.triple }}
+      - name: Dependency licenses
+        shell: bash
+        run: |
+          cargo install cargo-about --locked --version 0.9.3 --features cli
+          cargo about generate --target ${{ matrix.triple }} desktop/packaging/licenses.hbs -o THIRD_PARTY_LICENSES.html
+      - name: Package Linux
+        if: runner.os == 'Linux'
+        run: python3 desktop/packaging/package.py --arch ${{ matrix.arch }} --binary target/${{ matrix.triple }}/release/purrloader --licenses THIRD_PARTY_LICENSES.html
+      - name: Package Windows
+        if: runner.os == 'Windows'
+        run: python desktop/packaging/package.py --arch ${{ matrix.arch }} --binary target/${{ matrix.triple }}/release/purrloader.exe --licenses THIRD_PARTY_LICENSES.html
       - uses: actions/upload-artifact@v4
         with:
           name: purrloader-${{ matrix.name }}
           if-no-files-found: error
           path: |
-            electron/dist/*.exe
-            electron/dist/*.AppImage
-            electron/dist/*.deb
-            electron/dist/*.tar.gz
+            desktop/dist/*.exe
+            desktop/dist/*.AppImage
+            desktop/dist/*.deb
+            desktop/dist/*.tar.gz
 
   release:
     name: Attach to the release

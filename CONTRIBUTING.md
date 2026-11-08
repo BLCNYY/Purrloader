@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping. Purrloader aims to be the simplest way for anyone on a Mac to save a video or its audio,
+Thanks for helping. Purrloader aims to be the simplest way for people to save a video or its audio,
 so the bar for new UI in the main window is high. Power features belong in Settings > Advanced.
 
 ## Build and run
@@ -17,17 +17,25 @@ Set `PURRLOADER_SIGN_IDENTITY` to a signing identity from your keychain if you w
 
 ## Windows and Linux
 
-The Windows and Linux app in `electron/` is a port of the Mac app with the same features, words and look. A change
-to one usually belongs in the other too: `src/core/` mirrors `Sources/PurrloaderCore`, and `test/core.test.js`
-mirrors `Tests/PurrloaderCoreTests`. You need Node.js 22 or later.
+The Windows and Linux app in `desktop/` is a port of the Mac app with the same features, words and look. A change
+to one usually belongs in the other too: its core mirrors `Sources/PurrloaderCore`, and
+`desktop/tests/fixtures/commands.json` holds the yt-dlp argument cases both must agree on.
+Use Rust 1.92 or later and the platform prerequisites in [desktop/README.md](desktop/README.md).
 
 ```bash
-cd electron
-npm install
-npm start          # works on a Mac too, with its own data folder
-npm test
-npm run dist       # installers for Windows and Linux in electron/dist
+cargo run --bin purrloader       # macOS development uses an isolated data folder
+cargo fmt --all -- --check
+cargo clippy --locked --all-targets --all-features -- -D warnings
+cargo test --locked --all-features
+cargo build --locked --release --bin purrloader
 ```
+
+The `test-helper` feature builds a deterministic subprocess fixture for integration tests. It is excluded from
+release packages. Tests cover yt-dlp arguments, persistence, checksum verification, path traversal,
+process cancellation, queue scheduling and restart behavior. `--smoke-test` opens an offline window with
+temporary data, renders a few frames, then exits. Add `--demo --screenshot /path/to/smoke.png` for visual QA.
+
+Package on the target OS with `desktop/packaging/package.py`. CI tests Windows/Linux on x64 and arm64.
 
 ## Test
 

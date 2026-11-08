@@ -11,12 +11,14 @@ DerivedData/
 # macOS
 .DS_Store
 
-# Windows and Linux app (electron/)
-electron/node_modules/
-electron/dist/
+# Windows and Linux packages
+desktop/dist/
+THIRD_PARTY_LICENSES.html
+smoke.png
 
 # JS dependencies
 node_modules/
 
 # Rust build output
 target/
+

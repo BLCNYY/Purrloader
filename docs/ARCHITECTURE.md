@@ -3,7 +3,7 @@
 Purrloader is a SwiftUI app for macOS 15+, built with Swift Package Manager in Swift 6 language mode with strict
 concurrency. It isn't sandboxed and isn't meant for the App Store: it downloads and runs helper tools.
 
-The Windows and Linux app lives in `electron/` and is a port of the same app; see
+The Windows and Linux app lives in `desktop/` and is a port of the same app; see
 [Windows and Linux](#windows-and-linux) at the end.
 
 ## Targets
@@ -128,48 +128,67 @@ drawn by `dmg/background.swift`. The icon is an Icon Composer file; `build.sh` c
 
 ## Windows and Linux
 
-SwiftUI only runs on Apple platforms, so the Windows and Linux app in `electron/` is a port: the same features,
-the same words and the same look, point for point, in Electron.
+SwiftUI only runs on Apple platforms, so the Windows and Linux app in `desktop/` is a port in Rust: the same
+features, the same words and the same look, point for point, drawn with egui.
 
 ```
-electron/
-  src/core/        PurrloaderCore in JavaScript: options, yt-dlp arguments, progress, errors, media info.
-                   Pure functions, shared by the main process and the windows; test/ checks them against the
-                   same cases as Tests/PurrloaderCoreTests.
-  src/main/        the main process: helper tools (tools.js), the queue and history (downloads.js), the main
-                   window's model, saved setups and update check (model.js), windows and tray (windows.js),
-                   settings and the state hub (store.js), and the actions windows may call (ipc.js)
-  src/renderer/    the windows, in Preact with htm templates: main window, Settings, History, tray panel.
-                   controls.js has the Mac controls (pill segment, chips, switches, pop-up buttons, grouped
-                   forms, menus, popovers, sheets); styles.css has the Mac app's sizes and colours.
-  assets/          app icon and tray icons, rendered from the Mac app's icon and MenuBarIcon
-  electron-builder.yml   installers: NSIS for Windows, AppImage, .deb and .tar.gz for Linux, x64 and arm64
+Cargo.toml                   workspace, locked dependencies in Cargo.lock
+desktop/
+  src/main.rs                native window, isolated smoke mode, single-instance lock
+  src/app.rs                 main window, More popover, queue, sheets, Settings and History windows
+  src/settings_ui.rs         Settings > Advanced, section by section
+  src/theme.rs               colours, Inter in place of SF Pro, text helpers
+  src/widgets.rs             the Mac controls: pill segment, chips, switches, pop-up buttons, menus, forms
+  src/icons.rs               look-alikes of the SF Symbols the Mac app uses
+  src/platform.rs            native tray, activation and file-manager actions
+  src/engine.rs              queue state machine, background tasks, history, retry and shutdown
+  src/process.rs             concurrent pipe readers, process groups, cancellation and timeouts
+  src/tools.rs               verified helper archives and versioned installations
+  src/store.rs               versioned JSON envelopes and atomic persistence
+  src/options.rs             typed download settings with group-level recovery
+  src/command.rs             options to argument vectors (never shell execution)
+  src/progress.rs            yt-dlp stream and playlist progress parser
+  src/error.rs               recoverable errors and suggested actions
+  src/media.rs               metadata, stream formats and subtitle tracks
+  src/support.rs             links, selections, checksums and formatting
+  tests/                     compatibility, persistence, extraction and subprocess tests
+  test-support/helper.rs     deterministic executable used only in integration tests
+  assets/                    app and tray artwork, Inter
+  packaging/                 native NSIS, AppImage, Debian and portable-archive packaging
 ```
 
-- **State.** The main process owns everything, like the Mac app's singletons. Windows get state through
-  `Hub` (only the parts that changed, at most about fifteen times a second) and send named actions through
-  `ipc.js`. Text fields keep what's being typed and take the stored value when the main process changes it.
-- **Look.** The window background is `#2d2d2f`, what the Mac's matte black at 80% over the blurred desktop comes
-  out as, and every colour is drawn relative to it as in `Theme.swift`. The 38-point strip at the top holds the
-  menu button on the left and the system's own window buttons on the right. Inter stands in for SF Pro and
-  `icons.js` draws look-alikes of the SF Symbols, since Apple's fonts and symbols may only be used on Apple
-  platforms. Menus, popovers and sheets are drawn in the window so they look the same everywhere.
-- **Helper tools.** `yt-dlp_win.zip` / `yt-dlp_linux.zip` (and the arm64 builds), FFmpeg from
-  `yt-dlp/FFmpeg-Builds` (`shared` on Windows: half the download), and Deno, each checked against its
-  publisher's SHA-256 before it's unpacked. Every version of a tool gets its own folder under
-  `bin/<tool>/` and `bin/<tool>/current` names the newest, because Windows can't replace a running `.exe`.
-- **Pause.** Windows has no Ctrl-C for windowless processes, so pausing ends yt-dlp and its ffmpeg with
-  `taskkill /T`; the `.part` files resume all the same. Linux pauses with SIGINT like the Mac.
-- **Data** is in `%APPDATA%\Purrloader` or `~/.config/Purrloader`, with the same files as on the Mac plus
-  `settings.json` for what the Mac keeps in UserDefaults.
+The UI owns `Engine`; background workers send typed messages through a channel and wake egui when work arrives.
+No network request or download process runs on the UI thread. The queue runs oldest-first with a configurable
+1–10 job limit. Pause/cancel keep a slot occupied until the subprocess is reaped, preventing duplicate writers
+when a user quickly pauses and resumes. Metadata requests use generation tokens and cancellation so an older
+link cannot replace a newer preview. Logs retain at most 4,000 lines per job.
 
-```bash
-cd electron
-npm install
-npm start            # run it (on a Mac too, with its data in "Purrloader (Electron)")
-npm test
-npm run dist         # Windows and Linux installers in electron/dist
-```
+On Unix each helper gets a process group. Pause sends SIGINT to the group; a three-second grace period is
+followed by SIGKILL. On Windows helpers use hidden consoles and a kill-on-close Job Object owns their process trees.
+Both pipes are drained concurrently and pending lines are delivered before the exit event. Active jobs are
+saved queued before shutdown, while explicitly paused jobs remain paused. Cancel removes only known partial
+files inside that job's selected output folder; completed media stays on disk.
 
-`.github/workflows/release.yml` builds the installers on Windows and Linux for each `v*` tag and attaches them
-to that tag's release.
+Data stays in `%APPDATA%\Purrloader` or `$XDG_CONFIG_HOME/Purrloader` (normally `~/.config/Purrloader`).
+The files are `settings.json`, `queue.json`, `history.json` and `presets.json`, in the same schema-one envelope
+and camelCase keys as the Mac app's. Writes use a temporary file in the same directory, flush it, and atomically replace the destination. Unknown
+schemas and damaged JSON produce an error instead of overwriting the original. macOS development and smoke
+tests use separate directories. `PURRLOADER_DATA_DIR` can select an isolated directory for manual testing.
+
+Each tool version gets its own `bin/<package>/<build>/` folder and `current` names the newest, because Windows
+can't replace a running `.exe`.
+The publisher's checksum is verified before unpacking; ZIP traversal, symbolic links and special archive
+entries are rejected. FFmpeg's `.tar.xz` is decoded in Rust. Running jobs use resolved version paths so an update
+cannot replace an executable or DLL they are using. yt-dlp supports stable/nightly updates and one automatic
+update-and-retry for a blocked download.
+
+`VERSION` supplies the displayed app version through `build.rs`, as well as installer versions. The native
+tray uses Windows shell integration or Linux StatusNotifier over D-Bus, with show, pause, resume, history,
+settings and quit actions. Closing the window retains the app while its tray is enabled; explicit quit saves
+and stops downloads. Startup holds an exclusive file lock, so a second launch only brings the running window forward.
+
+[desktop/README.md](../desktop/README.md) covers building, packaging and platform prerequisites.
+`.github/workflows/ci.yml` builds and tests all four Windows/Linux architecture combinations and renders a
+window smoke screenshot. `.github/workflows/release.yml` packages those binaries on their native runners,
+checks binary architecture, includes dependency licenses and publishes the existing release asset names.
+The Swift build and local DMG release scripts are unchanged.

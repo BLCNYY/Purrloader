@@ -29,29 +29,48 @@ jobs:
         run: ./build.sh
 
   windows-linux:
-    name: Windows and Linux app (${{ matrix.os }})
+    name: Rust desktop (${{ matrix.os }})
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-22.04, ubuntu-22.04-arm, windows-latest, windows-11-arm]
     runs-on: ${{ matrix.os }}
-    defaults:
-      run:
-        working-directory: electron
     steps:
       - uses: actions/checkout@v4
-
-      - uses: actions/setup-node@v4
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: electron/package-lock.json
-
-      - name: Install
-        run: npm ci
-
-      - name: Test
-        run: npm test
-
-      - name: Package (unpacked)
-        run: npx electron-builder --dir --publish never
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - name: Linux development and smoke-test dependencies
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential pkg-config libssl-dev libxkbcommon-dev libwayland-dev libx11-dev libxcb-shape0-dev libxcb-xfixes0-dev libgl1-mesa-dev liblzma-dev xvfb dbus-x11
+      - name: Formatting
+        run: cargo fmt --all -- --check
+      - name: Lint
+        run: cargo clippy --locked --all-targets --all-features -- -D warnings
+      - name: Unit, compatibility and subprocess integration tests
+        run: cargo test --locked --all-features
+      - name: Packaging layout tests
+        run: python -B desktop/packaging/test_package.py
+      - name: Build desktop app
+        run: cargo build --locked --bin purrloader
+      - name: Linux window smoke test (isolated, offline)
+        if: runner.os == 'Linux'
+        run: dbus-run-session -- xvfb-run -a target/debug/purrloader --smoke-test --demo --screenshot smoke.png
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+      - name: Windows window smoke test (isolated, offline)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $process = Start-Process target/debug/purrloader.exe -ArgumentList '--smoke-test', '--demo', '--screenshot', 'smoke.png' -PassThru
+          if (-not $process.WaitForExit(60000)) { $process.Kill(); throw 'Window smoke test timed out' }
+          if ($process.ExitCode -ne 0) { throw "Window smoke test failed: $($process.ExitCode)" }
+          if (-not (Test-Path smoke.png)) { throw 'Window did not render a screenshot' }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: smoke-${{ matrix.os }}
+          path: smoke.png
+          if-no-files-found: error

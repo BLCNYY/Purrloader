@@ -1,0 +1,7 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Purrloader dependency licenses</title>
+<body><h1>Purrloader dependency licenses</h1>
+{{#each licenses}}
+<section><h2>{{name}}</h2><p>Used by: {{#each used_by}}{{crate.name}} {{crate.version}}; {{/each}}</p><pre>{{text}}</pre></section>
+{{/each}}
+</body></html>

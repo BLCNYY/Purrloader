@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Purrloader
+Comment=Save videos and audio from the web
+Exec=purrloader
+Icon=purrloader
+Terminal=false
+Categories=AudioVideo;Network;
+Keywords=download;video;audio;youtube;yt-dlp;
+StartupWMClass=purrloader

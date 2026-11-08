@@ -95,8 +95,7 @@ chmod +x Purrloader-x86_64.AppImage
 
 For arm64: [Purrloader-arm64.AppImage](https://github.com/BLCNYY/Purrloader/releases/latest/download/Purrloader-arm64.AppImage). AppImages need FUSE 2; if yours
 doesn't open, install it (`sudo apt install libfuse2t64` on Ubuntu 24.04 and later, `libfuse2` on older ones).
-On Ubuntu 24.04 and later the .deb is the better choice, because it sets up the security sandbox Purrloader's
-window runs in.
+Purrloader needs OpenGL 3.3 and glibc 2.35 or later (Ubuntu 22.04 or newer).
 
 **Or a plain archive**
 
@@ -109,14 +108,14 @@ tar -xzf Purrloader-linux-x64.tar.gz -C ~/.local/opt/purrloader --strip-componen
 
 For arm64: [Purrloader-linux-arm64.tar.gz](https://github.com/BLCNYY/Purrloader/releases/latest/download/Purrloader-linux-arm64.tar.gz).
 
-The helper tools are about 240 MB on Linux. Purrloader unpacks FFmpeg with `xz`, which almost every
-distribution has already (the .deb installs it if not). On GNOME, the tray icon needs the AppIndicator extension,
-which Ubuntu includes.
+The helper tools are about 240 MB on Linux. Archive extraction is built into the app. On GNOME, the tray icon
+needs the AppIndicator extension, which Ubuntu includes. The tray uses the desktop StatusNotifier service.
 
 ## How to use it
 
 1. **Copy a link** to a video, playlist or song. Purrloader picks it up from the clipboard as soon as you switch
-   to it, or you can paste it or drop it on the window.
+   to it (when the link field is empty on Windows/Linux), or you can paste it. Windows/Linux also accepts
+   dropped `.url`, `.webloc` and text files containing links.
 2. **Choose Video or Audio**, and a quality or format if you like. Best is already selected.
 3. **Press Download.** Files land in your Downloads folder. Click the folder chip to save somewhere else.
 
@@ -215,15 +214,18 @@ cd Purrloader
 
 `swift test` runs the tests. `./release.sh` builds a signed and notarized DMG when a Developer ID is configured.
 
-The Windows and Linux app is in `electron/`. You need [Node.js](https://nodejs.org) 22 or later.
+The Windows and Linux app is written in Rust and lives in `desktop/`.
+Install [Rust](https://rustup.rs) 1.92 or later. On Windows use the MSVC toolchain and Visual Studio C++ build
+tools. On Linux install the development packages listed in [desktop/README.md](desktop/README.md).
 
 ```bash
-cd electron
-npm install
-npm start
+cargo run --bin purrloader
+cargo test --locked --all-features
+cargo build --locked --release --bin purrloader
 ```
 
-`npm test` runs its tests and `npm run dist` builds the installers into `electron/dist`.
+Native installers are built into `desktop/dist`; see [desktop/README.md](desktop/README.md) for packaging.
+On a Mac, `cargo run` keeps its data in a separate folder, so it never touches the Mac app's.
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for how the project is laid out and how the pieces fit together.
 
 ## Contributing
@@ -241,7 +243,7 @@ Purrloader stands on the shoulders of:
   [Windows and Linux builds by yt-dlp](https://github.com/yt-dlp/FFmpeg-Builds) (GPL)
 - [Deno](https://deno.com), a JavaScript runtime yt-dlp uses for some sites (MIT)
 - [SponsorBlock](https://sponsor.ajay.app), the community database of sponsor segments (CC BY-NC-SA 4.0)
-- [Electron](https://www.electronjs.org) and [Inter](https://rsms.me/inter/), for the Windows and Linux app (MIT, OFL)
+- [egui and eframe](https://github.com/emilk/egui), for the Rust Windows and Linux interface (MIT/Apache-2.0)
 
 See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for details.
 
