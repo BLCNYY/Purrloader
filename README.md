@@ -93,9 +93,9 @@ chmod +x Purrloader-x86_64.AppImage
 ./Purrloader-x86_64.AppImage
 ```
 
-For arm64: [Purrloader-arm64.AppImage](https://github.com/BLCNYY/Purrloader/releases/latest/download/Purrloader-arm64.AppImage). AppImages need FUSE 2; if yours
-doesn't open, install it (`sudo apt install libfuse2t64` on Ubuntu 24.04 and later, `libfuse2` on older ones).
-Purrloader needs OpenGL 3.3 and glibc 2.35 or later (Ubuntu 22.04 or newer).
+For arm64: [Purrloader-arm64.AppImage](https://github.com/BLCNYY/Purrloader/releases/latest/download/Purrloader-arm64.AppImage). If it doesn't open, your system
+may be missing FUSE: install it (`sudo apt install fuse3` on Debian and Ubuntu), or start the AppImage with
+`--appimage-extract-and-run`.
 
 **Or a plain archive**
 
@@ -108,14 +108,14 @@ tar -xzf Purrloader-linux-x64.tar.gz -C ~/.local/opt/purrloader --strip-componen
 
 For arm64: [Purrloader-linux-arm64.tar.gz](https://github.com/BLCNYY/Purrloader/releases/latest/download/Purrloader-linux-arm64.tar.gz).
 
-The helper tools are about 240 MB on Linux. Archive extraction is built into the app. On GNOME, the tray icon
-needs the AppIndicator extension, which Ubuntu includes. The tray uses the desktop StatusNotifier service.
+Purrloader needs a distribution from 2022 or later (glibc 2.35, as in Ubuntu 22.04) and a graphics driver with
+OpenGL 3.3, which any PC from the last decade has. The helper tools are about 240 MB on Linux. On GNOME, the tray
+icon needs the AppIndicator extension, which Ubuntu includes.
 
 ## How to use it
 
 1. **Copy a link** to a video, playlist or song. Purrloader picks it up from the clipboard as soon as you switch
-   to it (when the link field is empty on Windows/Linux), or you can paste it. Windows/Linux also accepts
-   dropped `.url`, `.webloc` and text files containing links.
+   to it, or you can paste it. You can also drop links, or a text file with one link per line, on the window.
 2. **Choose Video or Audio**, and a quality or format if you like. Best is already selected.
 3. **Press Download.** Files land in your Downloads folder. Click the folder chip to save somewhere else.
 
@@ -243,7 +243,8 @@ Purrloader stands on the shoulders of:
   [Windows and Linux builds by yt-dlp](https://github.com/yt-dlp/FFmpeg-Builds) (GPL)
 - [Deno](https://deno.com), a JavaScript runtime yt-dlp uses for some sites (MIT)
 - [SponsorBlock](https://sponsor.ajay.app), the community database of sponsor segments (CC BY-NC-SA 4.0)
-- [egui and eframe](https://github.com/emilk/egui), for the Rust Windows and Linux interface (MIT/Apache-2.0)
+- [egui and eframe](https://github.com/emilk/egui), for the Windows and Linux interface (MIT/Apache-2.0)
+- [Inter](https://rsms.me/inter/) by Rasmus Andersson, the typeface on Windows and Linux (SIL Open Font License)
 
 See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for details.
 
