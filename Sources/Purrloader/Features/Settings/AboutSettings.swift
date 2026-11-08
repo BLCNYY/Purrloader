@@ -13,7 +13,8 @@ struct AboutSettings: View {
                         .accessibilityHidden(true)
                     VStack(alignment: .leading, spacing: 3) {
                         Text("Purrloader").font(.system(size: 17, weight: .semibold))
-                        Text("Version \(AppInfo.version)").foregroundStyle(.secondary)
+                        Text("The quiet way to save videos.").foregroundStyle(.secondary)
+                        Text("Version \(AppInfo.version)").font(.system(size: 11)).foregroundStyle(.tertiary)
                     }
                 }
                 .padding(.vertical, 4)

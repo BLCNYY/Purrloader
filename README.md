@@ -4,7 +4,7 @@
 
 # Purrloader
 
-**Save videos and audio from the web.**
+**The quiet way to save videos.**
 
 [![macOS 15+](https://img.shields.io/badge/macOS-15%2B-555?logo=apple&logoColor=white)](#macos)
 [![Windows 10+](https://img.shields.io/badge/Windows-10%2B-555?logo=windows&logoColor=white)](#windows)

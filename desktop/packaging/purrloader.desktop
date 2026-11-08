@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=Purrloader
-Comment=Save videos and audio from the web
+Comment=The quiet way to save videos
 Exec=purrloader
 Icon=purrloader
 Terminal=false

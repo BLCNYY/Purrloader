@@ -1421,7 +1421,7 @@ impl App {
                 );
                 icons::paint(ui, ring, "arrowDown", 20.0, W::Medium, theme::tertiary());
                 ui.label(theme::rich(
-                    "No downloads yet",
+                    "Paste. Purr. Done.",
                     14.0,
                     W::Semibold,
                     theme::secondary(),
@@ -2344,7 +2344,7 @@ impl App {
                         ui.spacing_mut().item_spacing.x = 14.0;
                         ui.add(self.icon_image().fit_to_exact_size(vec2(64.0, 64.0)));
                         ui.vertical(|ui| {
-                            ui.add_space(14.0);
+                            ui.add_space(7.0);
                             ui.spacing_mut().item_spacing.y = 3.0;
                             ui.label(theme::rich(
                                 "Purrloader",
@@ -2353,10 +2353,16 @@ impl App {
                                 theme::ink(1.0),
                             ));
                             ui.label(theme::rich(
-                                format!("Version {}", purrloader::VERSION),
+                                "The quiet way to save videos.",
                                 13.0,
                                 W::Regular,
                                 theme::secondary(),
+                            ));
+                            ui.label(theme::rich(
+                                format!("Version {}", purrloader::VERSION),
+                                11.0,
+                                W::Regular,
+                                theme::tertiary(),
                             ));
                         });
                         ui.with_layout(Layout::right_to_left(Align::Center), |ui| {

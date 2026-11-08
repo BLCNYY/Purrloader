@@ -128,7 +128,7 @@ def main():
             control.parent.mkdir()
             arch = 'amd64' if args.arch == 'x64' else 'arm64'
             size = sum(p.stat().st_size for p in deb.rglob('*') if p.is_file()) // 1024
-            control.write_text(f'Package: purrloader\nVersion: {VERSION}\nArchitecture: {arch}\nMaintainer: BLCNYY <blcnyy@users.noreply.github.com>\nSection: video\nPriority: optional\nInstalled-Size: {size}\nDepends: libc6 (>= 2.35), libgcc-s1, libgl1, libxkbcommon0, libxkbcommon-x11-0, libx11-6, libxcb1, libwayland-client0, liblzma5, xdg-utils\nDescription: Save videos and audio from the web\n A native Rust desktop app powered by yt-dlp.\n')
+            control.write_text(f'Package: purrloader\nVersion: {VERSION}\nArchitecture: {arch}\nMaintainer: BLCNYY <blcnyy@users.noreply.github.com>\nSection: video\nPriority: optional\nInstalled-Size: {size}\nDepends: libc6 (>= 2.35), libgcc-s1, libgl1, libxkbcommon0, libxkbcommon-x11-0, libx11-6, libxcb1, libwayland-client0, liblzma5, xdg-utils\nDescription: The quiet way to save videos\n Save videos and audio from thousands of sites. Paste a link, press Download.\n')
             run('dpkg-deb', '--root-owner-group', '--build', deb, output / f'purrloader_{arch}.deb')
         if args.format in ('all', 'appimage'):
             arch = 'x86_64' if args.arch == 'x64' else 'aarch64'
