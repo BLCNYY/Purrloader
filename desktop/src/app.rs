@@ -1421,7 +1421,7 @@ impl App {
                 );
                 icons::paint(ui, ring, "arrowDown", 20.0, W::Medium, theme::tertiary());
                 ui.label(theme::rich(
-                    "Paste. Purr. Done.",
+                    "Paste. Purr. Saved.",
                     14.0,
                     W::Semibold,
                     theme::secondary(),

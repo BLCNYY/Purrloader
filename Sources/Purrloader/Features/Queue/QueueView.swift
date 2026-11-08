@@ -42,7 +42,7 @@ struct QueueView: View {
                 .frame(width: 52, height: 52)
                 .overlay(Circle().strokeBorder(Theme.stroke, lineWidth: 1.5))
                 .accessibilityHidden(true)
-            Text("Paste. Purr. Done.").font(.system(size: 14, weight: .semibold)).foregroundStyle(Theme.secondary)
+            Text("Paste. Purr. Saved.").font(.system(size: 14, weight: .semibold)).foregroundStyle(Theme.secondary)
             Text("Paste a link above, or drop one anywhere in this window.")
                 .font(.system(size: 12)).foregroundStyle(Theme.tertiary)
         }
