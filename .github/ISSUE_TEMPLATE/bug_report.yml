@@ -1,0 +1,53 @@
+name: Bug report
+description: Something in Purrloader doesn't work as expected.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time. If a download from one particular site fails, first update the helper
+        tools (Settings > About > Update Now). If it still fails, it's most likely a
+        [yt-dlp extractor issue](https://github.com/yt-dlp/yt-dlp/issues) rather than a Purrloader bug.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you do, what did you expect, and what happened instead?
+    validations:
+      required: true
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version
+      placeholder: e.g. macOS 26.1 (Apple Silicon)
+    validations:
+      required: true
+  - type: input
+    id: purrloader
+    attributes:
+      label: Purrloader version
+      description: Settings > About
+      placeholder: e.g. 1.0
+    validations:
+      required: true
+  - type: input
+    id: ytdlp
+    attributes:
+      label: yt-dlp version
+      description: Settings > About, under Helper tools
+      placeholder: e.g. 2026.10.26 (stable)
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: Download log
+      description: |
+        In the queue, click the Details button on the download, then Copy Log, and paste it here.
+        Remove anything private (like links to private videos) first.
+      render: text
+  - type: textarea
+    id: extra
+    attributes:
+      label: Anything else?
+      description: Screenshots, links that reproduce it, settings you changed in Advanced.

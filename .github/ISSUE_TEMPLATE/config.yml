@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: A site stopped working
+    url: https://github.com/yt-dlp/yt-dlp/issues
+    about: Update Purrloader's helper tools first (Settings > About > Update Now). If the site still fails, report it to yt-dlp.
+  - name: Ideas and questions
+    url: https://github.com/BLCNYY/Purrloader/discussions
+    about: Suggest a feature or ask how something works.

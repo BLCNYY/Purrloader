@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <!-- Recessed: darker at the tip, where the ear folds away from the light. -->
+    <linearGradient id="inner" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8e8e98"/>
+      <stop offset="1" stop-color="#d9d9df"/>
+    </linearGradient>
+  </defs>
+  <g fill="url(#inner)" stroke="url(#inner)" stroke-width="28" stroke-linejoin="round">
+    <polygon points="333,463 353,330 436,404"/>
+    <polygon points="691,463 671,330 588,404"/>
+  </g>
+</svg>

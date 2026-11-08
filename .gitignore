@@ -1,0 +1,22 @@
+# Build output
+.build/
+build/
+*.dmg
+
+# Xcode and SwiftPM
+.swiftpm/
+xcuserdata/
+DerivedData/
+
+# macOS
+.DS_Store
+
+# Windows and Linux app (electron/)
+electron/node_modules/
+electron/dist/
+
+# JS dependencies
+node_modules/
+
+# Rust build output
+target/

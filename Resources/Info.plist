@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleExecutable</key><string>Purrloader</string>
+    <key>CFBundleIdentifier</key><string>com.blcnyy.purrloader</string>
+    <key>CFBundleName</key><string>Purrloader</string>
+    <key>CFBundleDisplayName</key><string>Purrloader</string>
+    <key>CFBundlePackageType</key><string>APPL</string>
+    <key>CFBundleShortVersionString</key><string>0.0</string>
+    <key>CFBundleVersion</key><string>1</string>
+    <key>CFBundleIconFile</key><string>Purrloader</string>
+    <key>CFBundleIconName</key><string>Purrloader</string>
+    <key>LSMinimumSystemVersion</key><string>15.0</string>
+    <key>LSApplicationCategoryType</key><string>public.app-category.utilities</string>
+    <key>NSHighResolutionCapable</key><true/>
+    <key>NSSupportsAutomaticTermination</key><false/>
+    <key>NSHumanReadableCopyright</key><string>Copyright © 2026 Ömer Balkan (BLCNYY). MIT License.</string>
+</dict>
+</plist>

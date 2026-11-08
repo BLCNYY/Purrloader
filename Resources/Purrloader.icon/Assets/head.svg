@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <defs>
+    <!-- Light from the upper left: bright brow, shaded jaw. -->
+    <radialGradient id="lit" cx="0.38" cy="0.22" r="0.95" fx="0.36" fy="0.18">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.45" stop-color="#f1f1f4"/>
+      <stop offset="0.8" stop-color="#cfcfd6"/>
+      <stop offset="1" stop-color="#a7a7b0"/>
+    </radialGradient>
+  </defs>
+  <rect x="282" y="390" width="460" height="360" rx="180" ry="170" fill="url(#lit)" stroke="url(#lit)" stroke-width="44" stroke-linejoin="round"/>
+</svg>
