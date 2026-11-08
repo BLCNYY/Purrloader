@@ -52,7 +52,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential pkg-config libssl-dev libxkbcommon-dev libwayland-dev libx11-dev libxcb-shape0-dev libxcb-xfixes0-dev libgl1-mesa-dev liblzma-dev squashfs-tools desktop-file-utils
+          sudo apt-get install -y build-essential pkg-config libssl-dev libxkbcommon-dev libxkbcommon-x11-0 libwayland-dev libx11-dev libxcb-shape0-dev libxcb-xfixes0-dev libgl1-mesa-dev liblzma-dev squashfs-tools desktop-file-utils
       - name: Windows installer tools
         if: runner.os == 'Windows'
         shell: pwsh

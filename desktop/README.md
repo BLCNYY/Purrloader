@@ -9,7 +9,7 @@ Install Rust 1.92 or later with rustup. Windows needs the MSVC C++ build tools a
 On Debian/Ubuntu:
 
 ```sh
-sudo apt install build-essential pkg-config libssl-dev libxkbcommon-dev libwayland-dev \
+sudo apt install build-essential pkg-config libssl-dev libxkbcommon-dev libxkbcommon-x11-0 libwayland-dev \
   libx11-dev libxcb-shape0-dev libxcb-xfixes0-dev libgl1-mesa-dev liblzma-dev
 ```
 

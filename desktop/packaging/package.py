@@ -110,8 +110,17 @@ def main():
             portable = work / 'Purrloader'
             shutil.copytree(appdir, portable)
             shutil.copy2(portable / 'AppRun', portable / 'purrloader')
+            executables = {'Purrloader/AppRun', 'Purrloader/purrloader', 'Purrloader/usr/bin/purrloader'}
+
+            def normalize(info):
+                # Set permissions explicitly, so the archive is right even when built on Windows.
+                info.uid = info.gid = 0
+                info.uname = info.gname = 'root'
+                info.mode = 0o755 if info.isdir() or info.name in executables else 0o644
+                return info
+
             with tarfile.open(output / f'Purrloader-linux-{args.arch}.tar.gz', 'w:gz') as archive:
-                archive.add(portable, arcname='Purrloader')
+                archive.add(portable, arcname='Purrloader', filter=normalize)
         if args.format in ('all', 'deb'):
             deb = work / 'deb'
             shutil.copytree(appdir / 'usr', deb / 'usr')
@@ -119,7 +128,7 @@ def main():
             control.parent.mkdir()
             arch = 'amd64' if args.arch == 'x64' else 'arm64'
             size = sum(p.stat().st_size for p in deb.rglob('*') if p.is_file()) // 1024
-            control.write_text(f'Package: purrloader\nVersion: {VERSION}\nArchitecture: {arch}\nMaintainer: BLCNYY <blcnyy@users.noreply.github.com>\nSection: video\nPriority: optional\nInstalled-Size: {size}\nDepends: libc6 (>= 2.35), libgcc-s1, libgl1, libxkbcommon0, libx11-6, libxcb1, libwayland-client0, liblzma5, xdg-utils\nDescription: Save videos and audio from the web\n A native Rust desktop app powered by yt-dlp.\n')
+            control.write_text(f'Package: purrloader\nVersion: {VERSION}\nArchitecture: {arch}\nMaintainer: BLCNYY <blcnyy@users.noreply.github.com>\nSection: video\nPriority: optional\nInstalled-Size: {size}\nDepends: libc6 (>= 2.35), libgcc-s1, libgl1, libxkbcommon0, libxkbcommon-x11-0, libx11-6, libxcb1, libwayland-client0, liblzma5, xdg-utils\nDescription: Save videos and audio from the web\n A native Rust desktop app powered by yt-dlp.\n')
             run('dpkg-deb', '--root-owner-group', '--build', deb, output / f'purrloader_{arch}.deb')
         if args.format in ('all', 'appimage'):
             arch = 'x86_64' if args.arch == 'x64' else 'aarch64'
