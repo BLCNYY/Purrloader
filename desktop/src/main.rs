@@ -58,12 +58,20 @@ fn run() -> anyhow::Result<()> {
             return Err(error);
         }
     };
+    // On Windows, OpenGL draws the windows (the blurred backdrop needs it). Where the PC's OpenGL is too old,
+    // Purrloader starts again with DirectX instead, set by PURRLOADER_RENDERER=wgpu.
     #[cfg(windows)]
-    let blur = platform::backdrop::supported();
+    let directx = std::env::var_os("PURRLOADER_RENDERER").is_some_and(|r| r == "wgpu");
+    // PURRLOADER_NO_BLUR=1 keeps the solid background, e.g. for graphics drivers that draw it wrongly.
+    #[cfg(windows)]
+    let blur = !directx
+        && platform::backdrop::supported()
+        && std::env::var_os("PURRLOADER_NO_BLUR").is_none();
     #[cfg(not(windows))]
     let blur = false;
     let icon = eframe::icon_data::from_png_bytes(include_bytes!("../assets/icon.png"))?;
-    let options = eframe::NativeOptions {
+    #[cfg_attr(not(windows), allow(unused_mut))]
+    let mut options = eframe::NativeOptions {
         viewport: egui::ViewportBuilder::default()
             .with_title("Purrloader")
             .with_app_id("purrloader")
@@ -73,11 +81,31 @@ fn run() -> anyhow::Result<()> {
             .with_icon(icon),
         ..Default::default()
     };
-    eframe::run_native(
+    #[cfg(windows)]
+    if directx {
+        options.renderer = eframe::Renderer::Wgpu;
+    }
+    let result = eframe::run_native(
         "Purrloader",
         options,
         Box::new(move |cc| Ok(Box::new(app::App::new(cc, paths, lock, smoke, blur)?))),
-    )
-    .map_err(|e| anyhow::anyhow!("{e}"))?;
+    );
+    #[cfg(windows)]
+    if !directx
+        && let Err(
+            eframe::Error::OpenGL(_)
+            | eframe::Error::Glutin(_)
+            | eframe::Error::NoGlutinConfigs(..),
+        ) = &result
+    {
+        // The window never opened, so the single-instance lock is already released.
+        drop(smoke_data);
+        let status = std::process::Command::new(std::env::current_exe()?)
+            .args(std::env::args_os().skip(1))
+            .env("PURRLOADER_RENDERER", "wgpu")
+            .status()?;
+        std::process::exit(status.code().unwrap_or(1));
+    }
+    result.map_err(|e| anyhow::anyhow!("{e}"))?;
     Ok(())
 }
