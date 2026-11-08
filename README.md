@@ -4,7 +4,7 @@
 
 # Purrloader
 
-**Save videos and audio from the web. Paste a link, press Download.**
+**Save videos and audio from the web.
 
 [![macOS 15+](https://img.shields.io/badge/macOS-15%2B-555?logo=apple&logoColor=white)](#macos)
 [![Windows 10+](https://img.shields.io/badge/Windows-10%2B-555?logo=windows&logoColor=white)](#windows)
@@ -57,8 +57,7 @@ Purrloader needs macOS 15 Sequoia or later and runs natively on Apple Silicon an
 
 1. Download the installer:
    - [Purrloader-Setup-x64.exe](https://github.com/BLCNYY/Purrloader/releases/latest/download/Purrloader-Setup-x64.exe) for most PCs
-   - [Purrloader-Setup-arm64.exe](https://github.com/BLCNYY/Purrloader/releases/latest/download/Purrloader-Setup-arm64.exe) for Windows on Arm (Snapdragon laptops,
-     Surface Pro X)
+   - [Purrloader-Setup-arm64.exe](https://github.com/BLCNYY/Purrloader/releases/latest/download/Purrloader-Setup-arm64.exe) for Windows on Arm (Qualcomm Snapdragon X Series and Nvidia RTX Spark)
 
    Not sure which? Look under Settings > System > About > System type.
 2. Open it. Purrloader installs for your account, without needing an administrator, adds itself to the Start
@@ -71,10 +70,6 @@ Purrloader needs macOS 15 Sequoia or later and runs natively on Apple Silicon an
 Purrloader needs 64-bit Windows 10 or 11. To remove it, use Settings > Apps > Installed apps.
 
 ### Linux
-
-There's a package for Debian and Ubuntu, an AppImage that runs on most distributions, and a plain archive. Each
-comes for x64 (most PCs) and arm64; the commands below are for x64, so swap in the arm64 file name if you need
-it.
 
 **Debian, Ubuntu, Linux Mint, Pop!_OS and other Debian-based distributions**
 
