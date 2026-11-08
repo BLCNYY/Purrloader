@@ -61,6 +61,7 @@ struct AboutSettings: View {
             }
         }
         .formStyle(.grouped)
-        .frame(width: 520, height: 600)
+        .scrollBounceBehavior(.basedOnSize)
+        .frame(width: 520, height: 680)
     }
 }

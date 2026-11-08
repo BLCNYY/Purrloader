@@ -17,15 +17,88 @@ struct SettingsView: View {
 
     var body: some View {
         TabView(selection: $tab) {
-            GeneralSettings()
+            GeneralSettings().clipsBelowToolbar()
                 .tabItem { Label("General", systemImage: "gearshape") }
                 .tag(SettingsTab.general)
-            AdvancedSettings()
+            AdvancedSettings().clipsBelowToolbar()
                 .tabItem { Label("Advanced", systemImage: "slider.horizontal.3") }
                 .tag(SettingsTab.advanced)
-            AboutSettings()
+            AboutSettings().clipsBelowToolbar()
                 .tabItem { Label("About", systemImage: "info.circle") }
                 .tag(SettingsTab.about)
+        }
+        .background(KeepsWindowCentered())
+    }
+}
+
+extension View {
+    /// The window's toolbar floats over its content and is see-through here, so a form scrolled up showed
+    /// its rows behind the tab buttons. This cuts the content off at the bottom edge of the toolbar instead.
+    fileprivate func clipsBelowToolbar() -> some View {
+        mask {
+            GeometryReader { geo in
+                Rectangle().padding(.top, geo.safeAreaInsets.top)
+            }
+            .ignoresSafeArea()
+        }
+    }
+}
+
+/// Opens the Settings window in the middle of the screen, and keeps it there: tabs have different sizes, and
+/// AppKit would otherwise grow the window from its top-left corner, pushing the bigger Advanced tab off centre.
+private struct KeepsWindowCentered: NSViewRepresentable {
+    func makeNSView(context: Context) -> NSView { Tracker() }
+    func updateNSView(_ nsView: NSView, context: Context) {}
+
+    final class Tracker: NSView {
+        private var lastFrame: NSRect?
+        private var observers: [NSObjectProtocol] = []
+        private var needsCentering = true
+
+        override func viewDidMoveToWindow() {
+            super.viewDidMoveToWindow()
+            observers.forEach(NotificationCenter.default.removeObserver)
+            observers = []
+            guard let window else { return }
+            watch(NSWindow.didResizeNotification, of: window) { $0.keepCenter() }
+            // SwiftUI keeps the Settings window around when it's closed; centre it again next time it opens.
+            watch(NSWindow.willCloseNotification, of: window) { $0.needsCentering = true }
+            watch(NSWindow.didBecomeKeyNotification, of: window) { $0.centerIfNeeded() }
+            DispatchQueue.main.async { [weak self] in self?.centerIfNeeded() }
+        }
+
+        private func watch(
+            _ name: Notification.Name, of window: NSWindow, _ handler: @escaping @MainActor (Tracker) -> Void
+        ) {
+            observers.append(
+                NotificationCenter.default.addObserver(forName: name, object: window, queue: .main) { [weak self] _ in
+                    MainActor.assumeIsolated { if let self { handler(self) } }
+                })
+        }
+
+        private func centerIfNeeded() {
+            guard needsCentering, let window, let screen = window.screen ?? NSScreen.main else { return }
+            needsCentering = false
+            let area = screen.visibleFrame
+            window.setFrameOrigin(
+                NSPoint(
+                    x: (area.midX - window.frame.width / 2).rounded(),
+                    y: (area.midY - window.frame.height / 2).rounded()))
+            lastFrame = window.frame
+        }
+
+        private func keepCenter() {
+            guard let window else { return }
+            let frame = window.frame
+            if let last = lastFrame, abs(frame.width - last.width) > 0.5 || abs(frame.height - last.height) > 0.5 {
+                var origin = NSPoint(x: last.midX - frame.width / 2, y: last.midY - frame.height / 2)
+                if let area = window.screen?.visibleFrame {
+                    origin.x = min(max(origin.x, area.minX), area.maxX - frame.width)
+                    origin.y = min(max(origin.y, area.minY), area.maxY - frame.height)
+                }
+                window.setFrameOrigin(NSPoint(x: origin.x.rounded(), y: origin.y.rounded()))
+            }
+            lastFrame = window.frame
         }
     }
 }

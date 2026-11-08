@@ -48,6 +48,14 @@ struct PurrloaderCommands: Commands {
                 openSettings()
             }
         }
+        CommandGroup(replacing: .appSettings) {
+            // Always General, rather than whichever tab Advanced Options… or About last left it on.
+            Button("Settings…") {
+                SettingsTab.select(.general)
+                openSettings()
+            }
+            .keyboardShortcut(",", modifiers: .command)
+        }
         CommandGroup(after: .newItem) {
             Button("Paste Link and Get Info") {
                 openWindow(id: "main")

@@ -15,72 +15,130 @@ struct MenuBarLabel: View {
 
 struct MenuBarView: View {
     @Environment(\.openWindow) private var openWindow
+    @Environment(\.openSettings) private var openSettings
+    @Environment(\.dismiss) private var dismiss
     private var manager: DownloadManager { .shared }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Text("Purrloader").font(.system(size: 14, weight: .semibold))
+        let visible = Array(manager.jobs.filter { !$0.status.isDone }.prefix(5))
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .firstTextBaseline) {
+                Text("Purrloader").font(.system(size: 13, weight: .semibold))
                 Spacer()
-                Text(summary).font(.system(size: 11)).foregroundStyle(Theme.secondary)
+                Text(summary).font(.system(size: 12)).foregroundStyle(Theme.secondary)
             }
-            let visible = Array(manager.jobs.filter { !$0.status.isDone }.prefix(6))
-            if visible.isEmpty {
-                Text("Nothing downloading")
-                    .font(.system(size: 12)).foregroundStyle(Theme.tertiary)
-                    .frame(maxWidth: .infinity, minHeight: 44)
-            } else {
-                ForEach(visible) { job in
-                    HStack(spacing: 10) {
-                        Thumbnail(url: job.thumbnail, width: 44)
-                        VStack(alignment: .leading, spacing: 5) {
-                            Text(job.title).font(.system(size: 12, weight: .semibold)).lineLimit(1)
-                            if job.status.isActive { SlimProgress(fraction: job.fraction) }
-                            Text(job.statusText).font(.system(size: 10)).foregroundStyle(Theme.secondary).lineLimit(1)
-                        }
-                    }
+            .padding(.horizontal, 14)
+            .padding(.top, 12)
+            .padding(.bottom, visible.isEmpty ? 10 : 12)
+
+            if !visible.isEmpty {
+                VStack(spacing: 10) {
+                    ForEach(visible) { job in MenuBarJobRow(job: job) }
                 }
+                .padding(.horizontal, 14)
+                .padding(.bottom, 12)
             }
-            HStack(spacing: 8) {
-                Button("Open Purrloader") {
+
+            MenuDivider()
+            VStack(spacing: 0) {
+                MenuRow("Open Purrloader") {
                     openWindow(id: "main")
                     NSApp.activate()
+                    dismiss()
                 }
-                .buttonStyle(PrimaryCapsuleStyle())
-                Spacer()
                 if manager.activeCount > 0 || manager.queuedCount > 0 {
-                    Button {
-                        manager.pauseAll()
-                    } label: {
-                        Image(systemName: "pause.fill")
-                    }
-                    .buttonStyle(CircleButtonStyle(size: 30)).help("Pause all").accessibilityLabel("Pause all")
+                    MenuRow("Pause All Downloads", shortcut: "⌥⌘P") { manager.pauseAll() }
                 } else if manager.jobs.contains(where: { $0.status == .paused }) {
-                    Button {
-                        manager.resumeAll()
-                    } label: {
-                        Image(systemName: "play.fill")
-                    }
-                    .buttonStyle(CircleButtonStyle(size: 30)).help("Resume all").accessibilityLabel("Resume all")
+                    MenuRow("Resume All Downloads", shortcut: "⌥⌘R") { manager.resumeAll() }
                 }
-                Button {
-                    NSApp.terminate(nil)
-                } label: {
-                    Image(systemName: "power")
-                }
-                .buttonStyle(CircleButtonStyle(size: 30)).help("Quit Purrloader").accessibilityLabel("Quit Purrloader")
             }
-            .padding(.top, 2)
+            .padding(5)
+            MenuDivider()
+            VStack(spacing: 0) {
+                MenuRow("Settings…", shortcut: "⌘,") {
+                    SettingsTab.select(.general)
+                    openSettings()
+                    NSApp.activate()
+                    dismiss()
+                }
+                MenuRow("Quit Purrloader", shortcut: "⌘Q") { NSApp.terminate(nil) }
+            }
+            .padding(5)
         }
-        .padding(14)
-        .frame(width: 320)
+        .frame(width: 300)
         .preferredColorScheme(.dark)
     }
 
     private var summary: String {
         let active = manager.activeCount, queued = manager.queuedCount
-        if active == 0 && queued == 0 { return "Idle" }
+        if active == 0 && queued == 0 {
+            return manager.jobs.contains(where: { $0.status == .paused }) ? "Paused" : "Nothing downloading"
+        }
         return queued > 0 ? "\(active) active · \(queued) waiting" : "\(active) active"
+    }
+}
+
+private struct MenuBarJobRow: View {
+    let job: DownloadJob
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Thumbnail(url: job.thumbnail, width: 48)
+            VStack(alignment: .leading, spacing: 4) {
+                Text(job.title).font(.system(size: 12, weight: .medium)).lineLimit(1).truncationMode(.middle)
+                if job.status.isActive { SlimProgress(fraction: job.fraction) }
+                HStack(spacing: 4) {
+                    Text(job.statusText).lineLimit(1)
+                    Spacer(minLength: 4)
+                    if job.status.isActive, let fraction = job.fraction {
+                        Text("\(Int(fraction * 100))%").monospacedDigit()
+                    }
+                }
+                .font(.system(size: 11))
+                .foregroundStyle(Theme.secondary)
+            }
+        }
+    }
+}
+
+/// A row like a menu item: the title, an optional shortcut hint, and the highlight on hover.
+private struct MenuRow: View {
+    let title: String
+    var shortcut: String?
+    let action: () -> Void
+    @State private var hovering = false
+
+    init(_ title: String, shortcut: String? = nil, action: @escaping () -> Void) {
+        self.title = title
+        self.shortcut = shortcut
+        self.action = action
+    }
+
+    var body: some View {
+        Button(action: action) {
+            HStack {
+                Text(title)
+                Spacer()
+                if let shortcut {
+                    Text(shortcut).foregroundStyle(hovering ? .white.opacity(0.75) : Theme.tertiary)
+                }
+            }
+            .font(.system(size: 13))
+            .padding(.horizontal, 9)
+            .frame(height: 24)
+            .contentShape(Rectangle())
+            .background(
+                RoundedRectangle(cornerRadius: 6, style: .continuous).fill(.white.opacity(hovering ? 0.1 : 0))
+            )
+        }
+        .buttonStyle(.plain)
+        .onHover { hovering = $0 }
+    }
+}
+
+private struct MenuDivider: View {
+    var body: some View {
+        Rectangle().fill(.white.opacity(0.1)).frame(height: 1).padding(.horizontal, 14)
     }
 }
 
