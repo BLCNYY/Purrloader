@@ -4,18 +4,17 @@
 
 # Purrloader
 
-**Save videos and audio from the web.
+**Save videos and audio from the web.**
 
 [![macOS 15+](https://img.shields.io/badge/macOS-15%2B-555?logo=apple&logoColor=white)](#macos)
 [![Windows 10+](https://img.shields.io/badge/Windows-10%2B-555?logo=windows&logoColor=white)](#windows)
 [![Linux](https://img.shields.io/badge/Linux-x64%20%7C%20arm64-555?logo=linux&logoColor=white)](#linux)
 [![License: MIT](https://img.shields.io/github/license/BLCNYY/Purrloader?color=555)](LICENSE)
 [![Latest release](https://img.shields.io/github/v/release/BLCNYY/Purrloader?color=555)](https://github.com/BLCNYY/Purrloader/releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/BLCNYY/Purrloader/total?color=555)](https://github.com/BLCNYY/Purrloader/releases)
 
 ### Download for [Mac](https://github.com/BLCNYY/Purrloader/releases/latest/download/Purrloader.dmg) · [Windows](https://github.com/BLCNYY/Purrloader/releases/latest/download/Purrloader-Setup-x64.exe) · [Linux](#linux)
 
-Free and open source · Mac, Windows and Linux · No account, no ads, no tracking
+Free and open source. No account, ads or tracking.
 
 <br>
 
@@ -25,63 +24,45 @@ Free and open source · Mac, Windows and Linux · No account, no ads, no trackin
 
 ## Features
 
-- **Video or audio in one click.** MP4 that plays in QuickTime, or MP3, M4A and lossless audio.
-- **Playlists with a checklist.** Tick the videos you want and skip the rest.
-- **Pause and resume.** Downloads pick up where they left off, even after you quit.
-- **Progress in the menu bar** (or the system tray). Keep an eye on downloads without the window open.
-- **Subtitles** in the languages the video actually has.
-- **Skip sponsor segments** using the community-run SponsorBlock database.
-- **Download just a part** of a long video by start and end time.
-- **Private, age-restricted or members-only content** through the sign-in you already have in your browser.
-- **Thousands of sites,** thanks to [yt-dlp](https://github.com/yt-dlp/yt-dlp).
-- **Stays up to date by itself.** Sites change; Purrloader quietly keeps up.
-- **Fully local.** Downloads go straight from the site to your computer. Nothing passes through a server of ours.
-- **No tracking.** No analytics, no telemetry, no accounts.
-- **Light or dark.** Follows your system, or pick one in Settings.
+- Video (MP4) or audio (MP3, M4A or lossless)
+- Playlists, with a checklist to pick videos
+- Pause and resume, even after quitting
+- Subtitles, sponsor skipping (SponsorBlock) and downloading part of a video
+- Private and age-restricted videos, using your browser's sign-in
+- Progress in the menu bar or system tray
+- Light and dark mode
+- Thousands of sites, through [yt-dlp](https://github.com/yt-dlp/yt-dlp)
+
+Downloads go straight from the site to your computer. On first launch Purrloader downloads its helper tools
+(yt-dlp, FFmpeg and Deno, about 150–240 MB) and checks each against its publisher's checksum.
 
 ## Install
 
-Purrloader looks and works the same on all three. Whichever you use, the first time you open it Purrloader
-downloads its free helper tools and checks each one against the checksum its publisher provides. That takes a
-minute; after that you're ready.
-
 ### macOS
 
-1. [Download Purrloader.dmg](https://github.com/BLCNYY/Purrloader/releases/latest/download/Purrloader.dmg).
-2. Open it and drag Purrloader into Applications.
-3. Open Purrloader. The helper tools are about 150 MB.
-
-Purrloader needs macOS 15 Sequoia or later and runs natively on Apple Silicon and Intel Macs.
+[Download Purrloader.dmg](https://github.com/BLCNYY/Purrloader/releases/latest/download/Purrloader.dmg), open it and
+drag Purrloader into Applications. Needs macOS 15 or later, on Apple Silicon or Intel.
 
 ### Windows
 
-1. Download the installer:
-   - [Purrloader-Setup-x64.exe](https://github.com/BLCNYY/Purrloader/releases/latest/download/Purrloader-Setup-x64.exe) for most PCs
-   - [Purrloader-Setup-arm64.exe](https://github.com/BLCNYY/Purrloader/releases/latest/download/Purrloader-Setup-arm64.exe) for Windows on Arm (Qualcomm Snapdragon X Series and Nvidia RTX Spark)
+Download [Purrloader-Setup-x64.exe](https://github.com/BLCNYY/Purrloader/releases/latest/download/Purrloader-Setup-x64.exe),
+or [Purrloader-Setup-arm64.exe](https://github.com/BLCNYY/Purrloader/releases/latest/download/Purrloader-Setup-arm64.exe)
+for Windows on Arm (Qualcomm Snapdragon X Series and Nvidia RTX Spark). Not sure which? See Settings > System > About >
+System type. It installs for your account without admin rights. Needs Windows 10 or 11.
 
-   Not sure which? Look under Settings > System > About > System type.
-2. Open it. Purrloader installs for your account, without needing an administrator, adds itself to the Start
-   menu and the desktop, and opens.
-
-   The installer isn't code-signed yet, so Windows may say "Windows protected your PC". Click **More info**,
-   then **Run anyway**.
-3. The helper tools are about 160 MB.
-
-Purrloader needs 64-bit Windows 10 or 11. To remove it, use Settings > Apps > Installed apps.
+The installer isn't code-signed yet, so Windows may say "Windows protected your PC". Click **More info**, then
+**Run anyway**.
 
 ### Linux
 
-**Debian, Ubuntu, Linux Mint, Pop!_OS and other Debian-based distributions**
+Debian, Ubuntu and their derivatives:
 
 ```bash
 wget https://github.com/BLCNYY/Purrloader/releases/latest/download/purrloader_amd64.deb
 sudo apt install ./purrloader_amd64.deb
 ```
 
-Then open Purrloader from your app menu. To update, install the newest .deb the same way. For arm64:
-[purrloader_arm64.deb](https://github.com/BLCNYY/Purrloader/releases/latest/download/purrloader_arm64.deb).
-
-**Any other distribution: AppImage**
+Other distributions:
 
 ```bash
 wget https://github.com/BLCNYY/Purrloader/releases/latest/download/Purrloader-x86_64.AppImage
@@ -89,35 +70,21 @@ chmod +x Purrloader-x86_64.AppImage
 ./Purrloader-x86_64.AppImage
 ```
 
-For arm64: [Purrloader-arm64.AppImage](https://github.com/BLCNYY/Purrloader/releases/latest/download/Purrloader-arm64.AppImage). If it doesn't open, your system
-may be missing FUSE: install it (`sudo apt install fuse3` on Debian and Ubuntu), or start the AppImage with
-`--appimage-extract-and-run`.
+If the AppImage doesn't open, install FUSE (`sudo apt install fuse3`) or run it with `--appimage-extract-and-run`.
+There's also a [plain archive](https://github.com/BLCNYY/Purrloader/releases/latest/download/Purrloader-linux-x64.tar.gz),
+and every file comes in an arm64 version on the [releases page](https://github.com/BLCNYY/Purrloader/releases/latest).
 
-**Or a plain archive**
+Needs glibc 2.35 or later (Ubuntu 22.04 or newer) and OpenGL 3.3. On GNOME, the tray icon needs the AppIndicator
+extension.
 
-```bash
-wget https://github.com/BLCNYY/Purrloader/releases/latest/download/Purrloader-linux-x64.tar.gz
-mkdir -p ~/.local/opt/purrloader
-tar -xzf Purrloader-linux-x64.tar.gz -C ~/.local/opt/purrloader --strip-components=1
-~/.local/opt/purrloader/purrloader
-```
+## Usage
 
-For arm64: [Purrloader-linux-arm64.tar.gz](https://github.com/BLCNYY/Purrloader/releases/latest/download/Purrloader-linux-arm64.tar.gz).
+1. Copy a link. Purrloader picks it up from the clipboard, or paste or drop it on the window.
+2. Choose Video or Audio, and a quality if you like.
+3. Press Download. Files go to your Downloads folder unless you pick another with the folder button.
 
-Purrloader needs a distribution from 2022 or later (glibc 2.35, as in Ubuntu 22.04) and a graphics driver with
-OpenGL 3.3, which any PC from the last decade has. The helper tools are about 240 MB on Linux. On GNOME, the tray
-icon needs the AppIndicator extension, which Ubuntu includes.
-
-## How to use it
-
-1. **Copy a link** to a video, playlist or song. Purrloader picks it up from the clipboard as soon as you switch
-   to it, or you can paste it. You can also drop links, or a text file with one link per line, on the window.
-2. **Choose Video or Audio**, and a quality or format if you like. Best is already selected.
-3. **Press Download.** Files land in your Downloads folder. Click the folder chip to save somewhere else.
-
-Need subtitles, sponsor skipping or just one part of a video? They're under **More**. Everything else lives in
-Settings > Advanced, and you never need to go there. On Windows and Linux, Settings and History are in the ☰ menu
-at the top left of the window.
+Subtitles, sponsor skipping and partial downloads are under **More**. Everything else is in Settings > Advanced.
+On Windows and Linux, Settings and History are in the ☰ menu.
 
 <div align="center">
 <img src="docs/images/playlist.png" width="49%" alt="Choosing which videos of a playlist to download">
@@ -129,126 +96,67 @@ at the top left of the window.
 <details>
 <summary><b>Which sites work?</b></summary>
 
-Thousands. Purrloader uses [yt-dlp](https://github.com/yt-dlp/yt-dlp), which supports most video, music and
-podcast sites; see its [list of supported sites](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md).
-If a link isn't supported, Purrloader tells you so. Sites with DRM-protected content (most paid streaming
-services) don't work, and Purrloader will never try to get around DRM.
-</details>
-
-<details>
-<summary><b>Where do my files go?</b></summary>
-
-Your Downloads folder, unless you pick another one with the folder chip next to the Download button or in
-Settings > General. Finished downloads stay listed under Recent; double-click one to show it in Finder (Explorer
-on Windows, your file manager on Linux). History lists everything you've downloaded: Window > History on a Mac,
-the ☰ menu on Windows and Linux.
-</details>
-
-<details>
-<summary><b>Why does it download extra tools?</b></summary>
-
-Purrloader is the friendly front end; the heavy lifting is done by free, open-source tools:
-[yt-dlp](https://github.com/yt-dlp/yt-dlp) reads the sites, [FFmpeg](https://ffmpeg.org) combines and converts
-the media, and [Deno](https://deno.com) helps yt-dlp with some sites. They're fetched straight from their
-publishers rather than bundled, so you always get current versions and Purrloader can keep them updated. Each
-download is verified against its publisher's SHA-256 checksum before it's used. They live in
-`~/Library/Application Support/Purrloader/bin` on a Mac, `%APPDATA%\Purrloader\bin` on Windows and
-`~/.config/Purrloader/bin` on Linux.
+Most sites [yt-dlp supports](https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md). DRM-protected content,
+such as most paid streaming services, doesn't work.
 </details>
 
 <details>
 <summary><b>How do I download private or age-restricted videos?</b></summary>
 
-Sign in to the site in your browser as usual. Then, in Purrloader, open **More** and choose your browser under
-"Sign in with my browser". Purrloader uses that sign-in for the download. If a download needs it, the error
-message has a "Use Browser Sign-In" button too. Safari needs Full Disk Access for Purrloader (System Settings >
-Privacy & Security); other browsers may ask for Keychain access. On Windows, Firefox works best: Chrome and Edge
-keep their sign-in locked, so close them first, and even then they may refuse. On Linux, Chromium-based
-browsers may ask for your keyring password.
+Sign in to the site in your browser, then pick that browser under **More** > "Sign in with my browser". On a Mac,
+Safari needs Full Disk Access for Purrloader. On Windows, Firefox works best; close Chrome and Edge first. On Linux,
+Chromium-based browsers may ask for your keyring password.
 </details>
 
 <details>
-<summary><b>A site stopped working. What now?</b></summary>
+<summary><b>A site stopped working.</b></summary>
 
-Sites change often, and the tools catch up within days. Purrloader updates them by itself, and if a site blocks
-a download it updates and retries automatically. You can also update by hand in Settings > About > Update Now,
-or switch to the nightly channel there for the very latest fixes. If a site still fails, it's best reported to
+Purrloader updates yt-dlp by itself and retries blocked downloads after updating. You can also update in
+Settings > About, or switch to the nightly channel there. If a site still fails, report it to
 [yt-dlp](https://github.com/yt-dlp/yt-dlp/issues).
 </details>
 
 <details>
-<summary><b>Is it safe?</b></summary>
+<summary><b>What does it connect to?</b></summary>
 
-Purrloader is open source, so anyone can read what it does. It has no analytics or tracking and doesn't send
-your links or files anywhere; downloads go straight from the site to your computer. The only other connections
-it makes are to GitHub (and, on a Mac, ffmpeg.martin-riedl.de) to fetch and update its helper tools, and to
-GitHub once a day to see if a new Purrloader is out. Mac releases are signed and notarized by Apple. The Windows
-and Linux builds aren't code-signed yet; each release lists their SHA-256 checksums in `SHA256SUMS.txt`.
-</details>
-
-<details>
-<summary><b>Does it work on Apple Silicon and Intel Macs? And on Arm PCs?</b></summary>
-
-Yes. Purrloader is a universal app, and it downloads the right helper tools for your Mac's processor. On Windows
-and Linux there are separate builds for x64 and arm64, such as Windows on Arm laptops.
+The sites you download from, GitHub (and on a Mac, ffmpeg.martin-riedl.de) to fetch and update its helper tools,
+and GitHub once a day to check for a new version of Purrloader. Nothing else: no analytics or telemetry. Mac
+releases are notarized by Apple; checksums for Windows and Linux files are in each release's `SHA256SUMS.txt`.
 </details>
 
 ## Responsible use
 
-Only download content you own or have permission to download. Respect creators, copyright and each site's
-terms of service. Purrloader doesn't circumvent DRM or other technical protection measures.
+Only download content you own or have permission to download, and respect each site's terms. Purrloader doesn't
+get around DRM.
 
 ## Build from source
 
-The Mac app is native SwiftUI. You need macOS 15 or later and Xcode 26 or later.
+Mac app (SwiftUI; macOS 15 and Xcode 26 or later):
 
 ```bash
 git clone https://github.com/BLCNYY/Purrloader.git
 cd Purrloader
-./build.sh --run
+./build.sh --run    # swift test runs the tests
 ```
 
-`swift test` runs the tests. `./release.sh` builds a signed and notarized DMG when a Developer ID is configured.
-
-The Windows and Linux app is written in Rust and lives in `desktop/`.
-Install [Rust](https://rustup.rs) 1.92 or later. On Windows use the MSVC toolchain and Visual Studio C++ build
-tools. On Linux install the development packages listed in [desktop/README.md](desktop/README.md).
+Windows and Linux app (Rust 1.92 or later, in `desktop/`; prerequisites in [desktop/README.md](desktop/README.md)):
 
 ```bash
 cargo run --bin purrloader
 cargo test --locked --all-features
-cargo build --locked --release --bin purrloader
 ```
 
-Native installers are built into `desktop/dist`; see [desktop/README.md](desktop/README.md) for packaging.
-On a Mac, `cargo run` keeps its data in a separate folder, so it never touches the Mac app's.
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for how the project is laid out and how the pieces fit together.
-
-## Contributing
-
-Bug reports and pull requests are welcome; [CONTRIBUTING.md](CONTRIBUTING.md) covers building, testing and code
-style. If a particular site fails, please try updating the helper tools first, and report extractor problems to
-[yt-dlp](https://github.com/yt-dlp/yt-dlp/issues).
+[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) explains how it fits together, and [CONTRIBUTING.md](CONTRIBUTING.md)
+covers contributing.
 
 ## Credits
 
-Purrloader stands on the shoulders of:
-
-- [yt-dlp](https://github.com/yt-dlp/yt-dlp), which does the actual downloading (Unlicense)
-- [FFmpeg](https://ffmpeg.org), in [macOS builds by Martin Riedl](https://ffmpeg.martin-riedl.de) and
-  [Windows and Linux builds by yt-dlp](https://github.com/yt-dlp/FFmpeg-Builds) (GPL)
-- [Deno](https://deno.com), a JavaScript runtime yt-dlp uses for some sites (MIT)
-- [SponsorBlock](https://sponsor.ajay.app), the community database of sponsor segments (CC BY-NC-SA 4.0)
-- [egui and eframe](https://github.com/emilk/egui), for the Windows and Linux interface (MIT/Apache-2.0)
-- [Inter](https://rsms.me/inter/) by Rasmus Andersson, the typeface on Windows and Linux (SIL Open Font License)
-
-See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for details.
+[yt-dlp](https://github.com/yt-dlp/yt-dlp) (Unlicense), [FFmpeg](https://ffmpeg.org) (GPL; builds by
+[Martin Riedl](https://ffmpeg.martin-riedl.de) and [yt-dlp](https://github.com/yt-dlp/FFmpeg-Builds)),
+[Deno](https://deno.com) (MIT), [SponsorBlock](https://sponsor.ajay.app) (CC BY-NC-SA 4.0),
+[egui](https://github.com/emilk/egui) (MIT/Apache-2.0) and [Inter](https://rsms.me/inter/) (OFL). Details in
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
 
 ## License
 
-[MIT](LICENSE) © 2026 Ömer Balkan
-
-<div align="center">
-<br>
-<sub>Made by <a href="https://x.com/BLCNYY">BLCNYY</a></sub>
-</div>
+[MIT](LICENSE) © 2026 Ömer Balkan · Made by [BLCNYY](https://x.com/BLCNYY)
