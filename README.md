@@ -19,7 +19,7 @@ Free and open source · Mac, Windows and Linux · No account, no ads, no trackin
 
 <br>
 
-<img src="docs/images/main-window.png" width="780" alt="The Purrloader window with a video's details and a download in progress">
+<img src="docs/images/main-window.png" width="780" alt="The Purrloader window with a video's details and two finished downloads">
 
 </div>
 
