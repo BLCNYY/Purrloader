@@ -62,7 +62,6 @@ struct MoreOptionsPopover: View {
         .controlSize(.small)
         .font(.system(size: 13))
         .frame(width: 330)
-        .preferredColorScheme(.dark)
     }
 
     private func section<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {

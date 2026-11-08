@@ -133,6 +133,8 @@ pub struct Settings {
     pub latest_app_version: Option<String>,
     pub latest_app_page: Option<String>,
     pub dismissed_app_version: Option<String>,
+    /// "system", "light" or "dark".
+    pub appearance: String,
 }
 impl Default for Settings {
     fn default() -> Self {
@@ -150,6 +152,7 @@ impl Default for Settings {
             latest_app_version: None,
             latest_app_page: None,
             dismissed_app_version: None,
+            appearance: "system".into(),
         }
     }
 }

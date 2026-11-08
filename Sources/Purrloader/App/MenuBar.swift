@@ -66,7 +66,6 @@ struct MenuBarView: View {
             .padding(5)
         }
         .frame(width: 300)
-        .preferredColorScheme(.dark)
     }
 
     private var summary: String {
@@ -120,7 +119,7 @@ private struct MenuRow: View {
                 Text(title)
                 Spacer()
                 if let shortcut {
-                    Text(shortcut).foregroundStyle(hovering ? .white.opacity(0.75) : Theme.tertiary)
+                    Text(shortcut).foregroundStyle(hovering ? Theme.secondary : Theme.tertiary)
                 }
             }
             .font(.system(size: 13))
@@ -128,7 +127,7 @@ private struct MenuRow: View {
             .frame(height: 24)
             .contentShape(Rectangle())
             .background(
-                RoundedRectangle(cornerRadius: 6, style: .continuous).fill(.white.opacity(hovering ? 0.1 : 0))
+                RoundedRectangle(cornerRadius: 6, style: .continuous).fill(Theme.ink.opacity(hovering ? 0.1 : 0))
             )
         }
         .buttonStyle(.plain)
@@ -138,7 +137,7 @@ private struct MenuRow: View {
 
 private struct MenuDivider: View {
     var body: some View {
-        Rectangle().fill(.white.opacity(0.1)).frame(height: 1).padding(.horizontal, 14)
+        Rectangle().fill(Theme.ink.opacity(0.1)).frame(height: 1).padding(.horizontal, 14)
     }
 }
 

@@ -6,67 +6,121 @@ use eframe::egui::{
 };
 use std::sync::Arc;
 
-/// Matte black at 80% over the blurred desktop, as the Mac window comes out.
-pub const BG: Color32 = Color32::from_rgb(0x2d, 0x2d, 0x2f);
-/// Sheets and the details log sit on the matte itself.
-pub const MATTE: Color32 = Color32::from_rgb(0x09, 0x09, 0x0a);
 pub const ACCENT: Color32 = Color32::from_rgb(0x0a, 0x84, 0xff);
-pub const LINK: Color32 = Color32::from_rgb(0x41, 0x9c, 0xff);
 pub const GREEN: Color32 = Color32::from_rgb(0x30, 0xd1, 0x58);
 pub const RED: Color32 = Color32::from_rgb(0xff, 0x45, 0x3a);
 pub const ORANGE: Color32 = Color32::from_rgb(0xff, 0x9f, 0x0a);
-/// The sticky header colour of tables (History, the format list).
-pub const TABLE_HEAD: Color32 = Color32::from_rgb(0x2a, 0x2a, 0x2c);
 
-static BLURRED: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+use std::sync::atomic::{AtomicBool, Ordering::Relaxed};
+static DARK: AtomicBool = AtomicBool::new(true);
+static BLURRED: AtomicBool = AtomicBool::new(false);
 
+/// Light or dark, as Settings > General > Appearance and the system say. Every colour below follows it.
+pub fn dark() -> bool {
+    DARK.load(Relaxed)
+}
 /// Called once the system draws a blurred backdrop behind the windows (Windows 11).
 #[cfg_attr(not(windows), allow(dead_code))]
 pub fn set_blurred(on: bool) {
-    BLURRED.store(on, std::sync::atomic::Ordering::Relaxed);
+    BLURRED.store(on, Relaxed);
 }
 pub fn blurred() -> bool {
-    BLURRED.load(std::sync::atomic::Ordering::Relaxed)
+    BLURRED.load(Relaxed)
 }
-/// The window background: matte black at 80% over the blurred desktop where the system blurs it, as on the
+fn pick(dark: Color32, light: Color32) -> Color32 {
+    if self::dark() { dark } else { light }
+}
+
+/// What the Mac's matte (black, or white in light mode) at 80% over the blurred desktop comes out as.
+pub fn bg() -> Color32 {
+    pick(
+        Color32::from_rgb(0x2d, 0x2d, 0x2f),
+        Color32::from_rgb(0xec, 0xec, 0xee),
+    )
+}
+/// The matte itself: sheets and the details log sit on it.
+pub fn matte() -> Color32 {
+    pick(
+        Color32::from_rgb(0x09, 0x09, 0x0a),
+        Color32::from_rgb(0xf9, 0xf9, 0xfa),
+    )
+}
+/// The window background: the matte at 80% over the blurred desktop where the system blurs it, as on the
 /// Mac; elsewhere the solid colour that comes out as.
 pub fn window_fill() -> Color32 {
     if blurred() {
-        Color32::from_rgba_unmultiplied(0x09, 0x09, 0x0a, 204)
+        let m = matte();
+        Color32::from_rgba_unmultiplied(m.r(), m.g(), m.b(), 204)
     } else {
-        BG
+        bg()
     }
 }
+/// The sticky header colour of tables (History, the format list).
+pub fn table_head() -> Color32 {
+    pick(
+        Color32::from_rgb(0x2a, 0x2a, 0x2c),
+        Color32::from_rgb(0xe4, 0xe4, 0xe6),
+    )
+}
+pub fn link() -> Color32 {
+    pick(
+        Color32::from_rgb(0x41, 0x9c, 0xff),
+        Color32::from_rgb(0x00, 0x68, 0xda),
+    )
+}
 
-pub fn white(alpha: f32) -> Color32 {
-    Color32::from_rgba_unmultiplied(255, 255, 255, (alpha * 255.0).round() as u8)
+/// Text and the marks drawn with it: white in dark mode, near-black in light mode. Surfaces, strokes and
+/// dimmed text are this at lower opacity, so every control reads the same in both.
+pub fn ink_rgb() -> [u8; 3] {
+    if dark() {
+        [255, 255, 255]
+    } else {
+        [26, 26, 28]
+    }
+}
+pub fn ink(alpha: f32) -> Color32 {
+    let [r, g, b] = ink_rgb();
+    Color32::from_rgba_unmultiplied(r, g, b, (alpha * 255.0).round() as u8)
+}
+/// What sits on an `ink` fill, like the Download button's title.
+pub fn on_ink() -> Color32 {
+    pick(Color32::BLACK, Color32::WHITE)
 }
 pub fn black(alpha: f32) -> Color32 {
     Color32::from_rgba_unmultiplied(0, 0, 0, (alpha * 255.0).round() as u8)
 }
 pub fn text90() -> Color32 {
-    white(0.9)
+    ink(0.9)
 }
 pub fn secondary() -> Color32 {
-    white(0.55)
+    ink(0.55)
 }
 pub fn tertiary() -> Color32 {
-    white(0.4)
+    ink(0.4)
 }
 pub fn surface() -> Color32 {
-    white(0.06)
+    ink(0.06)
 }
 pub fn stroke() -> Color32 {
-    white(0.08)
+    ink(if dark() { 0.08 } else { 0.1 })
 }
 pub fn warning() -> Color32 {
-    Color32::from_rgba_unmultiplied(255, 159, 10, 230)
+    pick(
+        Color32::from_rgba_unmultiplied(255, 159, 10, 230),
+        Color32::from_rgb(0xc9, 0x6a, 0x00),
+    )
 }
 pub fn menu_bg() -> Color32 {
-    Color32::from_rgba_unmultiplied(42, 42, 44, 240)
+    pick(
+        Color32::from_rgba_unmultiplied(42, 42, 44, 240),
+        Color32::from_rgba_unmultiplied(246, 246, 247, 245),
+    )
 }
 pub fn popover_bg() -> Color32 {
-    Color32::from_rgba_unmultiplied(38, 38, 40, 248)
+    pick(
+        Color32::from_rgba_unmultiplied(38, 38, 40, 248),
+        Color32::from_rgba_unmultiplied(250, 250, 251, 250),
+    )
 }
 
 /// SwiftUI's font weights; Inter has a static face for each one Purrloader uses.
@@ -186,7 +240,17 @@ pub fn install(ctx: &egui::Context) {
         fonts.families.insert(FontFamily::Name(name.into()), list);
     }
     ctx.set_fonts(fonts);
-    ctx.set_theme(egui::ThemePreference::Dark);
+    apply(ctx, true);
+}
+
+/// Switches every colour and egui's own visuals to light or dark.
+pub fn apply(ctx: &egui::Context, dark: bool) {
+    DARK.store(dark, Relaxed);
+    ctx.set_theme(if dark {
+        egui::ThemePreference::Dark
+    } else {
+        egui::ThemePreference::Light
+    });
     ctx.all_styles_mut(|style| {
         use egui::TextStyle::*;
         style.text_styles = [
@@ -211,16 +275,20 @@ pub fn install(ctx: &egui::Context) {
         };
         style.interaction.selectable_labels = false;
         let v = &mut style.visuals;
-        *v = egui::Visuals::dark();
-        v.panel_fill = BG;
-        v.window_fill = MATTE;
-        v.extreme_bg_color = white(0.07);
-        v.faint_bg_color = white(0.03);
+        *v = if dark {
+            egui::Visuals::dark()
+        } else {
+            egui::Visuals::light()
+        };
+        v.panel_fill = bg();
+        v.window_fill = matte();
+        v.extreme_bg_color = ink(0.07);
+        v.faint_bg_color = ink(0.03);
         v.override_text_color = None;
-        v.hyperlink_color = LINK;
+        v.hyperlink_color = link();
         v.selection.bg_fill = Color32::from_rgba_unmultiplied(10, 132, 255, 140);
-        v.selection.stroke = Stroke::new(1.0_f32, Color32::WHITE);
-        v.text_cursor.stroke = Stroke::new(1.5_f32, Color32::WHITE);
+        v.selection.stroke = Stroke::new(1.0_f32, ink(1.0));
+        v.text_cursor.stroke = Stroke::new(1.5_f32, ink(1.0));
         v.window_corner_radius = CornerRadius::same(18);
         v.menu_corner_radius = CornerRadius::same(11);
         v.window_stroke = Stroke::new(1.0_f32, stroke());
@@ -228,20 +296,20 @@ pub fn install(ctx: &egui::Context) {
             offset: [0, 24],
             blur: 60,
             spread: 0,
-            color: black(0.55),
+            color: black(if dark { 0.55 } else { 0.25 }),
         };
         v.popup_shadow = Shadow {
             offset: [0, 12],
             blur: 32,
             spread: 0,
-            color: black(0.45),
+            color: black(if dark { 0.45 } else { 0.18 }),
         };
         for (w, fill) in [
             (&mut v.widgets.noninteractive, Color32::TRANSPARENT),
-            (&mut v.widgets.inactive, white(0.1)),
-            (&mut v.widgets.hovered, white(0.14)),
-            (&mut v.widgets.active, white(0.18)),
-            (&mut v.widgets.open, white(0.1)),
+            (&mut v.widgets.inactive, ink(0.1)),
+            (&mut v.widgets.hovered, ink(0.14)),
+            (&mut v.widgets.active, ink(0.18)),
+            (&mut v.widgets.open, ink(0.1)),
         ] {
             w.bg_fill = fill;
             w.weak_bg_fill = fill;
@@ -252,11 +320,11 @@ pub fn install(ctx: &egui::Context) {
         v.widgets.noninteractive.fg_stroke = Stroke::new(1.0_f32, text90());
         v.widgets.noninteractive.bg_stroke = Stroke::new(1.0_f32, stroke());
         v.widgets.inactive.fg_stroke = Stroke::new(1.0_f32, text90());
-        v.widgets.hovered.fg_stroke = Stroke::new(1.0_f32, Color32::WHITE);
-        v.widgets.active.fg_stroke = Stroke::new(1.0_f32, Color32::WHITE);
+        v.widgets.hovered.fg_stroke = Stroke::new(1.0_f32, ink(1.0));
+        v.widgets.active.fg_stroke = Stroke::new(1.0_f32, ink(1.0));
         // Scroll handles: the Mac's thin grey bars.
-        v.widgets.inactive.bg_fill = white(0.28);
-        v.widgets.hovered.bg_fill = white(0.42);
-        v.widgets.active.bg_fill = white(0.5);
+        v.widgets.inactive.bg_fill = ink(0.28);
+        v.widgets.hovered.bg_fill = ink(0.42);
+        v.widgets.active.bg_fill = ink(0.5);
     });
 }

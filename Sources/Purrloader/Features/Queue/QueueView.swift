@@ -87,7 +87,7 @@ struct JobRow: View {
                     Text(job.statusText).lineLimit(job.status.error == nil ? 1 : 2).truncationMode(.tail)
                     if job.status.isActive, let f = job.fraction {
                         Spacer()
-                        Text("\(Int(f * 100))%").foregroundStyle(.white.opacity(0.8))
+                        Text("\(Int(f * 100))%").foregroundStyle(Theme.ink.opacity(0.8))
                     }
                 }
                 .font(.system(size: 11)).foregroundStyle(Theme.secondary).monospacedDigit()
@@ -101,7 +101,7 @@ struct JobRow: View {
         }
         .padding(10)
         .background(
-            RoundedRectangle(cornerRadius: 16, style: .continuous).fill(Color.white.opacity(hovering ? 0.07 : 0.04))
+            RoundedRectangle(cornerRadius: 16, style: .continuous).fill(Theme.ink.opacity(hovering ? 0.07 : 0.04))
         )
         .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).strokeBorder(Theme.stroke))
         .onHover { hovering = $0 }

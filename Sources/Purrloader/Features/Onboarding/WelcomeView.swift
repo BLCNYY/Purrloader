@@ -67,7 +67,7 @@ struct WelcomeView: View {
             VStack(alignment: .leading, spacing: 6) {
                 ProgressView(value: Double(progress?.written ?? 0), total: Double(max(progress?.expected ?? 0, 1)))
                     .progressViewStyle(.linear)
-                    .tint(.white)
+                    .tint(Theme.ink)
                 Text(caption(progress)).font(.system(size: 11)).foregroundStyle(Theme.secondary).monospacedDigit()
             }
         }

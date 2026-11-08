@@ -4,7 +4,7 @@ use crate::{
     icons,
     platform::{self, Tray},
     settings_ui::{self, Action},
-    theme::{self, W, white},
+    theme::{self, W, ink},
     widgets as w,
 };
 use eframe::egui::{
@@ -27,7 +27,7 @@ use std::{
 };
 
 const TOOLS: [&str; 4] = ["yt-dlp", "ffmpeg", "ffprobe", "deno"];
-const SETTINGS_SIZES: [[f32; 2]; 3] = [[520.0, 352.0], [720.0, 672.0], [520.0, 652.0]];
+const SETTINGS_SIZES: [[f32; 2]; 3] = [[520.0, 412.0], [720.0, 672.0], [520.0, 652.0]];
 
 fn settings_id() -> ViewportId {
     ViewportId::from_hash_of("purrloader-settings")
@@ -281,6 +281,9 @@ impl App {
         };
         if smoke {
             app.engine.settings.did_show_welcome = true;
+            if args.iter().any(|s| s == "--light") {
+                app.engine.settings.appearance = "light".into();
+            }
             if args.iter().any(|s| s == "--demo") {
                 app.demo();
             }
@@ -627,7 +630,7 @@ impl App {
         let response = ui.interact(rect, ui.id().with("app-menu"), Sense::click());
         let open = egui::Popup::is_id_open(ui.ctx(), egui::Popup::default_response_id(&response));
         if open || response.hovered() {
-            ui.painter().rect_filled(rect, 6, white(0.08));
+            ui.painter().rect_filled(rect, 6, ink(0.08));
         }
         icons::paint(
             ui,
@@ -727,7 +730,7 @@ impl App {
             })
             .show(ui, |ui| {
                 Frame::new()
-                    .fill(white(0.05))
+                    .fill(ink(0.05))
                     .corner_radius(12)
                     .inner_margin(Margin::symmetric(14, 0))
                     .show(ui, |ui| {
@@ -821,7 +824,7 @@ impl App {
         ui.painter().rect_stroke(
             rect.shrink(0.5),
             14,
-            Stroke::new(1.0_f32, if focused { white(0.3) } else { theme::stroke() }),
+            Stroke::new(1.0_f32, if focused { ink(0.3) } else { theme::stroke() }),
             egui::StrokeKind::Inside,
         );
         icons::paint(
@@ -845,7 +848,7 @@ impl App {
                 .frame(false)
                 .margin(Margin::ZERO)
                 .font(theme::font(15.0, W::Regular))
-                .text_color(Color32::WHITE)
+                .text_color(theme::ink(1.0))
                 .vertical_align(Align::Center)
                 .desired_width(text_rect.width())
                 .hint_text(theme::rich(
@@ -912,12 +915,12 @@ impl App {
                     &error.message,
                     12.0,
                     W::Medium,
-                    white(0.85),
+                    ink(0.85),
                     ui.available_width() - 190.0,
                     3,
                 );
                 let (r, _) = ui.allocate_exact_size(g.size(), Sense::hover());
-                ui.painter().galley(r.min, g, Color32::WHITE);
+                ui.painter().galley(r.min, g, theme::ink(1.0));
                 ui.with_layout(Layout::right_to_left(Align::Center), |ui| {
                     if self.refetch_after_tools {
                         w::spinner(ui, 16.0);
@@ -998,7 +1001,7 @@ impl App {
                         &info.title,
                         15.0,
                         W::Semibold,
-                        Color32::WHITE,
+                        theme::ink(1.0),
                         width,
                         2,
                     );
@@ -1018,9 +1021,9 @@ impl App {
                         + if live || custom { 23.0 } else { 0.0 };
                     ui.add_space(((height - content) / 2.0).max(0.0));
                     let (r, _) = ui.allocate_exact_size(title.size(), Sense::hover());
-                    ui.painter().galley(r.min, title, Color32::WHITE);
+                    ui.painter().galley(r.min, title, theme::ink(1.0));
                     let (r, _) = ui.allocate_exact_size(meta.size(), Sense::hover());
-                    ui.painter().galley(r.min, meta, Color32::WHITE);
+                    ui.painter().galley(r.min, meta, theme::ink(1.0));
                     if live || custom {
                         ui.horizontal(|ui| {
                             ui.spacing_mut().item_spacing.x = 6.0;
@@ -1028,7 +1031,7 @@ impl App {
                                 w::tag(ui, "LIVE", theme::RED);
                             }
                             if custom {
-                                w::tag(ui, "Custom format", Color32::WHITE);
+                                w::tag(ui, "Custom format", theme::ink(1.0));
                             }
                         });
                     }
@@ -1052,10 +1055,10 @@ impl App {
                     theme::secondary(),
                 ));
                 ui.with_layout(Layout::right_to_left(Align::Center), |ui| {
-                    if w::plain_button(ui, "None", Color32::WHITE).clicked() {
+                    if w::plain_button(ui, "None", theme::ink(1.0)).clicked() {
                         self.selected.clear();
                     }
-                    if w::plain_button(ui, "Select All", Color32::WHITE).clicked() {
+                    if w::plain_button(ui, "Select All", theme::ink(1.0)).clicked() {
                         self.selected = info.entries.iter().map(|e| e.index).collect();
                     }
                 });
@@ -1072,10 +1075,10 @@ impl App {
                         let (rect, response) = ui
                             .allocate_exact_size(vec2(ui.available_width(), 28.0), Sense::click());
                         if on {
-                            ui.painter().rect_filled(rect, 8, white(0.05));
+                            ui.painter().rect_filled(rect, 8, ink(0.05));
                         }
                         let color = if on {
-                            Color32::WHITE
+                            theme::ink(1.0)
                         } else {
                             theme::secondary()
                         };
@@ -1086,7 +1089,7 @@ impl App {
                             14.0,
                             W::Regular,
                             if on {
-                                Color32::WHITE
+                                theme::ink(1.0)
                             } else {
                                 theme::tertiary()
                             },
@@ -1105,7 +1108,7 @@ impl App {
                                 rect.center().y - index.size().y / 2.0,
                             ),
                             index,
-                            Color32::WHITE,
+                            theme::ink(1.0),
                         );
                         let duration = if entry.duration > 0.0 {
                             support::duration(entry.duration)
@@ -1125,7 +1128,7 @@ impl App {
                         ui.painter().galley(
                             pos2(rect.left() + 76.0, rect.center().y - title.size().y / 2.0),
                             title,
-                            Color32::WHITE,
+                            theme::ink(1.0),
                         );
                         ui.painter().galley(
                             pos2(
@@ -1133,7 +1136,7 @@ impl App {
                                 rect.center().y - duration.size().y / 2.0,
                             ),
                             duration,
-                            Color32::WHITE,
+                            theme::ink(1.0),
                         );
                         if response.clicked() {
                             if on {
@@ -1482,7 +1485,7 @@ impl App {
         let recent = job.status.recent();
         let mut picking = self.retry_browser.as_deref() == Some(&job.id);
         let frame = Frame::new()
-            .fill(if hovered { white(0.07) } else { white(0.04) })
+            .fill(if hovered { ink(0.07) } else { ink(0.04) })
             .stroke(Stroke::new(1.0_f32, theme::stroke()))
             .corner_radius(16)
             .inner_margin(Margin::same(10))
@@ -1614,12 +1617,12 @@ impl App {
                                 &job_title(job),
                                 13.0,
                                 W::Semibold,
-                                Color32::WHITE,
+                                theme::ink(1.0),
                                 Some(width),
                             );
                             let (r, _) =
                                 ui.allocate_exact_size(vec2(width, title.size().y), Sense::hover());
-                            ui.painter().galley(r.min, title, Color32::WHITE);
+                            ui.painter().galley(r.min, title, theme::ink(1.0));
                             let running = job.status.active() || job.status == Status::Queued;
                             if running {
                                 w::slim_progress(ui, job.progress.fraction, width);
@@ -1657,15 +1660,10 @@ impl App {
                                     if job.error.is_some() { 2 } else { 1 },
                                 );
                                 let (r, _) = ui.allocate_exact_size(galley.size(), Sense::hover());
-                                ui.painter().galley(r.min, galley, Color32::WHITE);
+                                ui.painter().galley(r.min, galley, theme::ink(1.0));
                                 if let Some(percent) = percent {
                                     ui.with_layout(Layout::right_to_left(Align::Center), |ui| {
-                                        ui.label(theme::rich(
-                                            percent,
-                                            11.0,
-                                            W::Regular,
-                                            white(0.8),
-                                        ));
+                                        ui.label(theme::rich(percent, 11.0, W::Regular, ink(0.8)));
                                     });
                                 }
                             });
@@ -1682,7 +1680,7 @@ impl App {
                                     Some(width),
                                 );
                                 let (r, _) = ui.allocate_exact_size(g.size(), Sense::hover());
-                                ui.painter().galley(r.min, g, Color32::WHITE);
+                                ui.painter().galley(r.min, g, theme::ink(1.0));
                             }
                         });
                     });
@@ -1800,7 +1798,7 @@ impl App {
                 ui.vertical(|ui| {
                     ui.spacing_mut().item_spacing.y = 4.0;
                     let width = ui.available_width();
-                    theme::paragraph(ui, &job_title(&job), 15.0, W::Semibold, Color32::WHITE, 2);
+                    theme::paragraph(ui, &job_title(&job), 15.0, W::Semibold, theme::ink(1.0), 2);
                     let g = theme::wrapped(
                         ui,
                         &job.status_text(),
@@ -1811,7 +1809,7 @@ impl App {
                         2,
                     );
                     let (r, _) = ui.allocate_exact_size(g.size(), Sense::hover());
-                    ui.painter().galley(r.min, g, Color32::WHITE);
+                    ui.painter().galley(r.min, g, theme::ink(1.0));
                 });
                 let log_height = size.y - 160.0 - if self.show_command { 60.0 } else { 0.0 };
                 Frame::new()
@@ -1859,7 +1857,7 @@ impl App {
                 ui.painter().galley(
                     pos2(rect.left() + 14.0, rect.center().y - g.size().y / 2.0),
                     g,
-                    Color32::WHITE,
+                    theme::ink(1.0),
                 );
                 if response.clicked() {
                     self.show_command = !self.show_command;
@@ -1913,7 +1911,7 @@ impl App {
                     ui.add(self.icon_image().fit_to_exact_size(vec2(96.0, 96.0)));
                     ui.vertical_centered(|ui| {
                         ui.spacing_mut().item_spacing.y = 6.0;
-                        ui.label(theme::rich("Welcome to Purrloader", 20.0, W::Semibold, Color32::WHITE));
+                        ui.label(theme::rich("Welcome to Purrloader", 20.0, W::Semibold, theme::ink(1.0)));
                         ui.add(
                             egui::Label::new(theme::rich(
                                 "Paste a link to a video and Purrloader saves it, or just its audio, to your computer.",
@@ -1951,7 +1949,7 @@ impl App {
                     } else {
                         status.add_space(10.0);
                         let (bar, _) = status.allocate_exact_size(vec2(368.0, 6.0), Sense::hover());
-                        status.painter().rect_filled(bar, 3, white(0.12));
+                        status.painter().rect_filled(bar, 3, ink(0.12));
                         let t = (status.input(|i| i.time) / 1.6).fract() as f32;
                         let left = bar.left() - 110.0 + (bar.width() + 110.0) * t;
                         let fill = Rect::from_min_max(
@@ -1959,7 +1957,7 @@ impl App {
                             pos2((left + 110.0).min(bar.right()), bar.bottom()),
                         );
                         if fill.width() > 0.0 {
-                            status.painter().rect_filled(fill, 3, Color32::WHITE);
+                            status.painter().rect_filled(fill, 3, theme::ink(1.0));
                         }
                         status.ctx().request_repaint();
                         status.add_space(6.0);
@@ -2033,7 +2031,7 @@ impl App {
             builder = builder.with_position(position);
         }
         ctx.show_viewport_immediate(settings_id(), builder, |ctx, class| {
-            dark_title_bar(ctx);
+            title_bar_theme(ctx, &self.engine.settings.appearance.clone());
             self.backdrop(0, title);
             if shown != tab {
                 // Switching tabs resizes the window around its centre instead of out from its top-left corner.
@@ -2080,9 +2078,9 @@ impl App {
                 let response = ui.interact(tab, ui.id().with(("tab", i)), Sense::click());
                 let selected = self.settings_tab == i;
                 if selected {
-                    ui.painter().rect_filled(tab, 8, white(0.1));
+                    ui.painter().rect_filled(tab, 8, ink(0.1));
                 } else if response.hovered() {
-                    ui.painter().rect_filled(tab, 8, white(0.05));
+                    ui.painter().rect_filled(tab, 8, ink(0.05));
                 }
                 icons::paint(
                     ui,
@@ -2102,7 +2100,7 @@ impl App {
                     11.0,
                     W::Regular,
                     if selected {
-                        Color32::WHITE
+                        theme::ink(1.0)
                     } else {
                         theme::secondary()
                     },
@@ -2111,7 +2109,7 @@ impl App {
                 ui.painter().galley(
                     pos2(tab.center().x - g.size().x / 2.0, tab.top() + 28.0),
                     g,
-                    Color32::WHITE,
+                    theme::ink(1.0),
                 );
                 if response.clicked() {
                     self.settings_tab = i;
@@ -2133,6 +2131,19 @@ impl App {
             let mut choose = false;
             let settings = &mut self.engine.settings;
             w::section(ui, None, None, |ui, form| {
+                w::row(ui, form, "Appearance", None, |ui| {
+                    w::segmented(
+                        ui,
+                        &mut settings.appearance,
+                        &[
+                            ("system".into(), "System"),
+                            ("light".into(), "Light"),
+                            ("dark".into(), "Dark"),
+                        ],
+                    );
+                });
+            });
+            w::section(ui, None, None, |ui, form| {
                 w::row(ui, form, "Save downloads to", None, |ui| {
                     choose = w::bezel_button(ui, "Change…", false, true).clicked();
                     let g = theme::line(
@@ -2144,7 +2155,7 @@ impl App {
                         Some(220.0),
                     );
                     let (r, response) = ui.allocate_exact_size(g.size(), Sense::hover());
-                    ui.painter().galley(r.min, g, Color32::WHITE);
+                    ui.painter().galley(r.min, g, theme::ink(1.0));
                     response.on_hover_text(folder.display().to_string());
                 });
                 let label = format!("Download {} at a time", settings.max_concurrent);
@@ -2213,7 +2224,7 @@ impl App {
                             "These settings apply to every download.",
                             13.0,
                             W::Semibold,
-                            Color32::WHITE,
+                            theme::ink(1.0),
                         ));
                         ui.label(theme::rich(
                             "You don't need any of them for everyday downloads.",
@@ -2253,7 +2264,7 @@ impl App {
             let width: f32 = settings_ui::SECTIONS
                 .iter()
                 .map(|s| {
-                    theme::line(ui, s, 13.0, W::Medium, Color32::WHITE, None)
+                    theme::line(ui, s, 13.0, W::Medium, theme::ink(1.0), None)
                         .size()
                         .x
                         + 30.0
@@ -2335,7 +2346,12 @@ impl App {
                         ui.vertical(|ui| {
                             ui.add_space(14.0);
                             ui.spacing_mut().item_spacing.y = 3.0;
-                            ui.label(theme::rich("Purrloader", 17.0, W::Semibold, Color32::WHITE));
+                            ui.label(theme::rich(
+                                "Purrloader",
+                                17.0,
+                                W::Semibold,
+                                theme::ink(1.0),
+                            ));
                             ui.label(theme::rich(
                                 format!("Version {}", purrloader::VERSION),
                                 13.0,
@@ -2529,7 +2545,7 @@ impl App {
                     ui.vertical_centered(|ui| {
                         ui.spacing_mut().item_spacing.y = 10.0;
                         ui.add(self.icon_image().fit_to_exact_size(vec2(56.0, 56.0)));
-                        ui.label(theme::rich("Save Setup", 13.0, W::Bold, Color32::WHITE));
+                        ui.label(theme::rich("Save Setup", 13.0, W::Bold, theme::ink(1.0)));
                         ui.label(theme::rich(
                             "Saves every setting, including the quality and format in the main window.",
                             11.0,
@@ -2579,10 +2595,10 @@ impl App {
                 Frame::new().inner_margin(Margin::same(16)).show(ui, |ui| {
                     ui.set_width(408.0);
                     ui.spacing_mut().item_spacing.y = 10.0;
-                    ui.label(theme::rich("Saved Setups", 13.0, W::Bold, Color32::WHITE));
+                    ui.label(theme::rich("Saved Setups", 13.0, W::Bold, theme::ink(1.0)));
                     Frame::new()
                         .fill(theme::black(0.15))
-                        .stroke(Stroke::new(1.0_f32, white(0.06)))
+                        .stroke(Stroke::new(1.0_f32, ink(0.06)))
                         .corner_radius(6)
                         .show(ui, |ui| {
                             egui::ScrollArea::vertical()
@@ -2602,7 +2618,7 @@ impl App {
                                         let fill = if selected {
                                             theme::ACCENT
                                         } else if i % 2 == 1 {
-                                            white(0.03)
+                                            ink(0.03)
                                         } else {
                                             Color32::TRANSPARENT
                                         };
@@ -2612,7 +2628,11 @@ impl App {
                                             &preset.name,
                                             13.0,
                                             W::Regular,
-                                            Color32::WHITE,
+                                            if selected {
+                                                Color32::WHITE
+                                            } else {
+                                                theme::ink(1.0)
+                                            },
                                             Some(rect.width() - 16.0),
                                         );
                                         ui.painter().galley(
@@ -2621,7 +2641,7 @@ impl App {
                                                 rect.center().y - g.size().y / 2.0,
                                             ),
                                             g,
-                                            Color32::WHITE,
+                                            theme::ink(1.0),
                                         );
                                         if response.clicked() {
                                             self.manage_selection = Some(preset.id.clone());
@@ -2713,7 +2733,7 @@ impl App {
             .with_min_inner_size([560.0, 360.0])
             .with_transparent(theme::blurred());
         ctx.show_viewport_immediate(history_id(), builder, |ctx, class| {
-            dark_title_bar(ctx);
+            title_bar_theme(ctx, &self.engine.settings.appearance.clone());
             self.backdrop(1, "History");
             if class == egui::ViewportClass::Embedded {
                 let mut open = true;
@@ -2782,7 +2802,7 @@ impl App {
                     .max_rect(rect.shrink2(vec2(20.0, 0.0)))
                     .layout(Layout::left_to_right(Align::Center)),
             );
-            child.label(theme::rich("History", 15.0, W::Bold, Color32::WHITE));
+            child.label(theme::rich("History", 15.0, W::Bold, theme::ink(1.0)));
             child.with_layout(Layout::right_to_left(Align::Center), |ui| {
                 ui.spacing_mut().item_spacing.x = 8.0;
                 search_field(ui, &mut self.history_search);
@@ -2817,13 +2837,13 @@ impl App {
         let width = ui.available_width();
         let columns = [width - 360.0, 170.0, 190.0];
         let (head, _) = ui.allocate_exact_size(vec2(width, 28.0), Sense::hover());
-        ui.painter().rect_filled(head, 0, theme::TABLE_HEAD);
+        ui.painter().rect_filled(head, 0, theme::table_head());
         ui.painter().line_segment(
             [
                 pos2(head.left(), head.bottom() - 0.5),
                 pos2(head.right(), head.bottom() - 0.5),
             ],
-            Stroke::new(1.0_f32, white(0.08)),
+            Stroke::new(1.0_f32, ink(0.08)),
         );
         let mut x = head.left();
         for (title, w) in ["Title", "Date", "Folder"].iter().zip(columns) {
@@ -2831,7 +2851,7 @@ impl App {
             ui.painter().galley(
                 pos2(x + 10.0, head.center().y - g.size().y / 2.0),
                 g,
-                Color32::WHITE,
+                theme::ink(1.0),
             );
             x += w;
         }
@@ -2848,7 +2868,7 @@ impl App {
                     let fill = if selected {
                         theme::ACCENT
                     } else if index % 2 == 1 {
-                        white(0.03)
+                        ink(0.03)
                     } else {
                         Color32::TRANSPARENT
                     };
@@ -2862,7 +2882,11 @@ impl App {
                     let cells = [
                         (
                             entry.title.clone(),
-                            Color32::WHITE,
+                            if selected {
+                                Color32::WHITE
+                            } else {
+                                theme::ink(1.0)
+                            },
                             rect.left() + 66.0,
                             columns[0] - 76.0,
                         ),
@@ -2892,7 +2916,7 @@ impl App {
                         ui.painter().galley(
                             pos2(x, rect.center().y - g.size().y / 2.0),
                             g,
-                            Color32::WHITE,
+                            theme::ink(1.0),
                         );
                     }
                     if response.clicked() {
@@ -2982,7 +3006,7 @@ impl App {
             child.add_space((empty.height() / 2.0 - 50.0).max(0.0));
             child.spacing_mut().item_spacing.y = 6.0;
             icons::show(&mut child, icon, 34.0, W::Regular, theme::tertiary());
-            child.label(theme::rich(title, 17.0, W::Bold, Color32::WHITE));
+            child.label(theme::rich(title, 17.0, W::Bold, theme::ink(1.0)));
             child.label(theme::rich(text, 13.0, W::Regular, theme::secondary()));
         }
     }
@@ -3046,12 +3070,18 @@ fn centered(ctx: &egui::Context, size: [f32; 2]) -> Option<egui::Pos2> {
     Some((middle - size / 2.0).round())
 }
 
-/// Asks the system for a dark title bar once per window.
-fn dark_title_bar(ctx: &egui::Context) {
-    let id = egui::Id::new("dark-title-bar");
-    if !ctx.data(|d| d.get_temp::<bool>(id).unwrap_or(false)) {
-        ctx.data_mut(|d| d.insert_temp(id, true));
-        ctx.send_viewport_cmd(egui::ViewportCommand::SetTheme(egui::SystemTheme::Dark));
+/// Gives this window's title bar the chosen appearance; with "system" it follows the system's.
+fn title_bar_theme(ctx: &egui::Context, appearance: &str) {
+    let theme = match appearance {
+        "light" => egui::SystemTheme::Light,
+        "dark" => egui::SystemTheme::Dark,
+        _ => egui::SystemTheme::SystemDefault,
+    };
+    let id = egui::Id::new(("title-bar-theme", ctx.viewport_id()));
+    let key = format!("{theme:?}");
+    if ctx.data(|d| d.get_temp::<String>(id)).as_deref() != Some(&key) {
+        ctx.data_mut(|d| d.insert_temp(id, key));
+        ctx.send_viewport_cmd(egui::ViewportCommand::SetTheme(theme));
     }
 }
 
@@ -3061,7 +3091,7 @@ fn browser_picker(ui: &mut Ui, current: &str) -> Option<String> {
     Frame::new().inner_margin(Margin::same(14)).show(ui, |ui| {
         ui.set_width(ui.available_width());
         ui.spacing_mut().item_spacing.y = 10.0;
-        ui.label(theme::rich("Sign in with my browser", 13.0, W::Semibold, Color32::WHITE));
+        ui.label(theme::rich("Sign in with my browser", 13.0, W::Semibold, theme::ink(1.0)));
         theme::paragraph(
             ui,
             "Sign in to the site in one of these browsers first. Purrloader then uses that sign-in.",
@@ -3077,10 +3107,10 @@ fn browser_picker(ui: &mut Ui, current: &str) -> Option<String> {
                 ui.painter().rect_filled(
                     rect,
                     7,
-                    if response.hovered() { white(0.1) } else { white(0.05) },
+                    if response.hovered() { ink(0.1) } else { ink(0.05) },
                 );
                 let g = theme::line(ui, settings_ui::browser_title(browser), 13.0, W::Regular, theme::text90(), None);
-                ui.painter().galley(pos2(rect.left() + 10.0, rect.center().y - g.size().y / 2.0), g, Color32::WHITE);
+                ui.painter().galley(pos2(rect.left() + 10.0, rect.center().y - g.size().y / 2.0), g, theme::ink(1.0));
                 if *browser == current {
                     icons::paint(
                         ui,
@@ -3119,7 +3149,7 @@ fn confirm_sheet(
                 ui.spacing_mut().item_spacing.y = 10.0;
                 ui.add(icon.clone().fit_to_exact_size(vec2(56.0, 56.0)));
                 ui.add(
-                    egui::Label::new(theme::rich(title, 13.0, W::Bold, Color32::WHITE))
+                    egui::Label::new(theme::rich(title, 13.0, W::Bold, theme::ink(1.0)))
                         .halign(Align::Center)
                         .wrap(),
                 );
@@ -3159,13 +3189,16 @@ fn wide_bezel(ui: &mut Ui, text: &str, default: bool) -> egui::Response {
 /// A window toolbar: 52 points, a hairline below.
 fn toolbar(ui: &mut Ui, add: impl FnOnce(&mut Ui, Rect)) {
     let (rect, _) = ui.allocate_exact_size(vec2(ui.available_width(), 52.0), Sense::hover());
-    ui.painter().rect_filled(rect, 0, white(0.02));
+    ui.painter().rect_filled(rect, 0, ink(0.02));
     ui.painter().line_segment(
         [
             pos2(rect.left(), rect.bottom() - 0.5),
             pos2(rect.right(), rect.bottom() - 0.5),
         ],
-        Stroke::new(1.0_f32, theme::black(0.35)),
+        Stroke::new(
+            1.0_f32,
+            theme::black(if theme::dark() { 0.35 } else { 0.12 }),
+        ),
     );
     add(ui, rect);
 }
@@ -3179,7 +3212,7 @@ fn toolbar_button(ui: &mut Ui, icon: &str, tip: &str, enabled: bool) -> egui::Re
         },
     );
     if enabled && response.hovered() {
-        ui.painter().rect_filled(rect, 8, white(0.08));
+        ui.painter().rect_filled(rect, 8, ink(0.08));
     }
     icons::paint(
         ui,
@@ -3197,11 +3230,11 @@ fn toolbar_button(ui: &mut Ui, icon: &str, tip: &str, enabled: bool) -> egui::Re
 }
 fn search_field(ui: &mut Ui, text: &mut String) {
     let (rect, _) = ui.allocate_exact_size(vec2(180.0, 28.0), Sense::hover());
-    ui.painter().rect_filled(rect, 8, white(0.07));
+    ui.painter().rect_filled(rect, 8, ink(0.07));
     ui.painter().rect_stroke(
         rect,
         8,
-        Stroke::new(0.5_f32, white(0.12)),
+        Stroke::new(0.5_f32, ink(0.12)),
         egui::StrokeKind::Inside,
     );
     icons::paint(
@@ -3223,7 +3256,7 @@ fn search_field(ui: &mut Ui, text: &mut String) {
             .frame(false)
             .margin(Margin::ZERO)
             .font(theme::font(13.0, W::Regular))
-            .text_color(Color32::WHITE)
+            .text_color(theme::ink(1.0))
             .vertical_align(Align::Center)
             .hint_text(theme::rich(
                 "Search history",
@@ -3269,8 +3302,15 @@ fn form(ui: &mut Ui, add: impl FnOnce(&mut Ui)) {
 impl eframe::App for App {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         self.frames += 1;
-        if self.frames == 1 {
-            ctx.send_viewport_cmd(egui::ViewportCommand::SetTheme(egui::SystemTheme::Dark));
+        let appearance = self.engine.settings.appearance.clone();
+        title_bar_theme(ctx, &appearance);
+        let dark = match appearance.as_str() {
+            "light" => false,
+            "dark" => true,
+            _ => ctx.system_theme().is_none_or(|t| t == egui::Theme::Dark),
+        };
+        if self.frames == 1 || dark != theme::dark() {
+            theme::apply(ctx, dark);
         }
         self.engine.poll();
         let settings_before = self.engine.settings.clone();
@@ -3345,7 +3385,7 @@ impl eframe::App for App {
             painter.rect_stroke(
                 rect,
                 16,
-                Stroke::new(2.0_f32, white(0.6)),
+                Stroke::new(2.0_f32, ink(0.6)),
                 egui::StrokeKind::Inside,
             );
         }
@@ -3397,7 +3437,7 @@ impl eframe::App for App {
         if theme::blurred() {
             [0.0; 4]
         } else {
-            theme::BG.to_normalized_gamma_f32()
+            theme::bg().to_normalized_gamma_f32()
         }
     }
     fn on_exit(&mut self, _gl: Option<&eframe::glow::Context>) {

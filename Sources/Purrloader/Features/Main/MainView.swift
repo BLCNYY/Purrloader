@@ -32,7 +32,7 @@ struct MainView: View {
         .overlay {
             if isDropTargeted {
                 RoundedRectangle(cornerRadius: 16).strokeBorder(
-                    .white.opacity(0.6), style: StrokeStyle(lineWidth: 2, dash: [8, 6])
+                    Theme.ink.opacity(0.6), style: StrokeStyle(lineWidth: 2, dash: [8, 6])
                 )
                 .padding(8)
                 .allowsHitTesting(false)
@@ -85,7 +85,7 @@ struct MainView: View {
         .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Theme.surface))
         .overlay(
             RoundedRectangle(cornerRadius: 14, style: .continuous)
-                .strokeBorder(urlFocused ? .white.opacity(0.3) : Theme.stroke, lineWidth: 1)
+                .strokeBorder(urlFocused ? Theme.ink.opacity(0.3) : Theme.stroke, lineWidth: 1)
         )
         .animation(.easeOut(duration: 0.15), value: urlFocused)
     }
@@ -206,7 +206,7 @@ struct FetchErrorRow: View {
         HStack(spacing: 10) {
             Image(systemName: "exclamationmark.triangle.fill").foregroundStyle(Theme.warning).accessibilityHidden(true)
             Text(error.message)
-                .font(.system(size: 12, weight: .medium)).foregroundStyle(.white.opacity(0.85))
+                .font(.system(size: 12, weight: .medium)).foregroundStyle(Theme.ink.opacity(0.85))
                 .lineLimit(3).textSelection(.enabled)
             Spacer(minLength: 8)
             if updating {
@@ -255,7 +255,7 @@ struct InfoCard: View {
                     Text(subtitle).font(.system(size: 12)).foregroundStyle(Theme.secondary).lineLimit(1)
                     HStack(spacing: 6) {
                         if info.isLive { Tag(text: "LIVE", color: .red) }
-                        if !model.options.format.exactFormat.isEmpty { Tag(text: "Custom format", color: .white) }
+                        if !model.options.format.exactFormat.isEmpty { Tag(text: "Custom format", color: Theme.ink) }
                     }
                 }
                 Spacer(minLength: 0)
@@ -265,7 +265,7 @@ struct InfoCard: View {
             }
         }
         .padding(12)
-        .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(Color.white.opacity(0.04)))
+        .background(RoundedRectangle(cornerRadius: 16, style: .continuous).fill(Theme.ink.opacity(0.04)))
         .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).strokeBorder(Theme.stroke))
         .transition(.opacity.combined(with: .move(edge: .top)))
     }
@@ -311,16 +311,16 @@ struct PlaylistPicker: View {
         } label: {
             HStack(spacing: 10) {
                 Image(systemName: selected ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(selected ? .white : Theme.tertiary)
+                    .foregroundStyle(selected ? Theme.ink : Theme.tertiary)
                 Text("\(entry.index)").monospacedDigit().foregroundStyle(Theme.tertiary).frame(
                     width: 32, alignment: .trailing)
-                Text(entry.title).lineLimit(1).foregroundStyle(selected ? .white : Theme.secondary)
+                Text(entry.title).lineLimit(1).foregroundStyle(selected ? Theme.ink : Theme.secondary)
                 Spacer()
                 if let d = Format.duration(entry.duration) { Text(d).monospacedDigit().foregroundStyle(Theme.tertiary) }
             }
             .font(.system(size: 12))
             .padding(.horizontal, 10).frame(height: 28)
-            .background(RoundedRectangle(cornerRadius: 8).fill(selected ? Color.white.opacity(0.05) : .clear))
+            .background(RoundedRectangle(cornerRadius: 8).fill(selected ? Theme.ink.opacity(0.05) : .clear))
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)

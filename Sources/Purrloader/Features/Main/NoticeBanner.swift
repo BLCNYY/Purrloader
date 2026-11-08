@@ -48,7 +48,7 @@ struct NoticeBanner: View {
             } else if let release = updater.available {
                 banner {
                     Image(systemName: "sparkles").foregroundStyle(Theme.secondary)
-                    Text("Purrloader \(release.version) is available.").foregroundStyle(.white.opacity(0.9))
+                    Text("Purrloader \(release.version) is available.").foregroundStyle(Theme.ink.opacity(0.9))
                     Spacer()
                     Link("View", destination: release.page).buttonStyle(SecondaryCapsuleStyle())
                     dismissButton { updater.dismiss() }
@@ -65,7 +65,7 @@ struct NoticeBanner: View {
             .foregroundStyle(Theme.secondary)
             .padding(.horizontal, 14)
             .frame(minHeight: 40)
-            .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(Color.white.opacity(0.05)))
+            .background(RoundedRectangle(cornerRadius: 12, style: .continuous).fill(Theme.ink.opacity(0.05)))
     }
 
     private func dismissButton(_ action: @escaping () -> Void) -> some View {

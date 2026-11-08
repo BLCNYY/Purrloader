@@ -2,7 +2,7 @@
 //! buttons, menus, popovers, sheets and grouped forms, drawn the same way on Windows and Linux.
 use crate::{
     icons,
-    theme::{self, W, white},
+    theme::{self, W, ink},
 };
 use eframe::egui::{
     self, Align, Color32, CornerRadius, Frame, Id, Layout, Margin, Rect, Response, Sense, Stroke,
@@ -52,7 +52,7 @@ pub fn pill_segment<T: PartialEq + Clone>(
                 13.0,
                 if selected { W::Semibold } else { W::Medium },
                 if selected {
-                    Color32::BLACK
+                    theme::on_ink()
                 } else {
                     theme::secondary()
                 },
@@ -87,7 +87,7 @@ pub fn pill_segment<T: PartialEq + Clone>(
     ui.painter().rect_filled(
         Rect::from_min_size(pos2(left, slots[index].top()), vec2(width, height - 4.0)),
         FULL,
-        Color32::WHITE,
+        theme::ink(1.0),
     );
     let mut changed = false;
     for (i, ((option, _), galley)) in options.iter().zip(galleys).enumerate() {
@@ -95,7 +95,7 @@ pub fn pill_segment<T: PartialEq + Clone>(
         ui.painter().galley(
             slots[i].center() - galley.size() / 2.0,
             galley,
-            Color32::WHITE,
+            theme::ink(1.0),
         );
         if response.clicked() && option != value {
             *value = option.clone();
@@ -117,9 +117,9 @@ pub fn chip(ui: &mut Ui, text: &str, icon: Option<&str>, chevron: bool, open: bo
     }
     let (rect, response) = ui.allocate_exact_size(vec2(width, 32.0), Sense::click());
     let fill = if open || response.is_pointer_button_down_on() {
-        white(0.1)
+        ink(0.1)
     } else if response.hovered() {
-        white(0.08)
+        ink(0.08)
     } else {
         theme::surface()
     };
@@ -140,7 +140,7 @@ pub fn chip(ui: &mut Ui, text: &str, icon: Option<&str>, chevron: bool, open: bo
     ui.painter().galley(
         pos2(x, rect.center().y - galley.size().y / 2.0),
         galley,
-        Color32::WHITE,
+        theme::ink(1.0),
     );
     if chevron {
         icons::paint(
@@ -157,7 +157,7 @@ pub fn chip(ui: &mut Ui, text: &str, icon: Option<&str>, chevron: bool, open: bo
 
 /// The white Download button.
 pub fn primary_button(ui: &mut Ui, text: &str, enabled: bool) -> Response {
-    let galley = theme::line(ui, text, 13.0, W::Semibold, Color32::BLACK, None);
+    let galley = theme::line(ui, text, 13.0, W::Semibold, theme::on_ink(), None);
     let size = vec2(galley.size().x + 36.0, 32.0);
     let sense = if enabled {
         Sense::click()
@@ -171,28 +171,28 @@ pub fn primary_button(ui: &mut Ui, text: &str, enabled: bool) -> Response {
     ui.painter().rect_filled(
         rect,
         FULL,
-        if enabled { Color32::WHITE } else { white(0.25) },
+        if enabled { theme::ink(1.0) } else { ink(0.25) },
     );
     ui.painter()
-        .galley(rect.center() - galley.size() / 2.0, galley, Color32::BLACK);
+        .galley(rect.center() - galley.size() / 2.0, galley, theme::on_ink());
     response
 }
 
 /// A small capsule button for fixes like "Retry" and "Try Again".
 pub fn secondary_button(ui: &mut Ui, text: &str) -> Response {
-    let galley = theme::line(ui, text, 12.0, W::Semibold, white(0.92), None);
+    let galley = theme::line(ui, text, 12.0, W::Semibold, ink(0.92), None);
     let (rect, response) =
         ui.allocate_exact_size(vec2(galley.size().x + 24.0, 28.0), Sense::click());
     let fill = if response.is_pointer_button_down_on() {
-        white(0.2)
+        ink(0.2)
     } else if response.hovered() {
-        white(0.14)
+        ink(0.14)
     } else {
-        white(0.1)
+        ink(0.1)
     };
     paint_capsule(ui, rect, fill, Some(theme::stroke()));
     ui.painter()
-        .galley(rect.center() - galley.size() / 2.0, galley, Color32::WHITE);
+        .galley(rect.center() - galley.size() / 2.0, galley, theme::ink(1.0));
     response
 }
 
@@ -215,16 +215,16 @@ pub fn circle_button(
     );
     let fill = if !enabled {
         if filled {
-            white(0.06)
+            ink(0.06)
         } else {
             Color32::TRANSPARENT
         }
     } else if response.is_pointer_button_down_on() {
-        white(0.18)
+        ink(0.18)
     } else if response.hovered() {
-        white(0.12)
+        ink(0.12)
     } else if filled {
-        white(0.06)
+        ink(0.06)
     } else {
         Color32::TRANSPARENT
     };
@@ -242,7 +242,7 @@ pub fn circle_button(
         icon,
         (size * 0.42).round(),
         W::Semibold,
-        if enabled { white(0.9) } else { white(0.3) },
+        if enabled { ink(0.9) } else { ink(0.3) },
     );
     response.on_hover_text(tooltip)
 }
@@ -273,9 +273,9 @@ pub fn bezel_button(ui: &mut Ui, text: &str, default: bool, enabled: bool) -> Re
             theme::ACCENT
         }
     } else if down {
-        white(0.18)
+        ink(0.18)
     } else {
-        white(0.1)
+        ink(0.1)
     };
     bezel(ui, rect, fill);
     ui.painter()
@@ -291,15 +291,15 @@ pub fn bezel_menu_button(ui: &mut Ui, text: &str) -> Response {
         ui,
         rect,
         if response.is_pointer_button_down_on() {
-            white(0.18)
+            ink(0.18)
         } else {
-            white(0.1)
+            ink(0.1)
         },
     );
     ui.painter().galley(
         pos2(rect.left() + 10.0, rect.center().y - galley.size().y / 2.0),
         galley,
-        Color32::WHITE,
+        theme::ink(1.0),
     );
     icons::paint(
         ui,
@@ -313,6 +313,24 @@ pub fn bezel_menu_button(ui: &mut Ui, text: &str) -> Response {
 }
 fn bezel(ui: &Ui, rect: Rect, fill: Color32) {
     let radius = CornerRadius::same(7);
+    if !theme::dark() {
+        // Light mode: the Mac's white push button with a soft edge; grey while pressed.
+        let blue = fill == theme::ACCENT || fill == theme::ACCENT.gamma_multiply(0.8);
+        let fill = if blue {
+            fill
+        } else if fill.a() > 30 {
+            Color32::from_rgb(0xe4, 0xe4, 0xe6)
+        } else {
+            Color32::WHITE
+        };
+        ui.painter().rect_filled(
+            rect.translate(vec2(0.0, 0.5)).expand(0.5),
+            radius,
+            theme::black(0.14),
+        );
+        ui.painter().rect_filled(rect, radius, fill);
+        return;
+    }
     ui.painter()
         .rect_filled(rect.expand(0.5), radius, theme::black(0.3));
     ui.painter().rect_filled(rect, radius, fill);
@@ -321,7 +339,7 @@ fn bezel(ui: &Ui, rect: Rect, fill: Color32) {
             pos2(rect.left() + 4.0, rect.top() + 0.5),
             pos2(rect.right() - 4.0, rect.top() + 0.5),
         ],
-        Stroke::new(0.5_f32, white(0.08)),
+        Stroke::new(0.5_f32, ink(0.08)),
     );
 }
 
@@ -340,7 +358,7 @@ pub fn plain_button(ui: &mut Ui, text: &str, color: Color32) -> Response {
 
 /// A blue text link, like "Advanced Options…".
 pub fn link_button(ui: &mut Ui, text: &str) -> Response {
-    let galley = theme::line(ui, text, 13.0, W::Regular, theme::LINK, None);
+    let galley = theme::line(ui, text, 13.0, W::Regular, theme::link(), None);
     let (rect, response) = ui.allocate_exact_size(galley.size(), Sense::click());
     if response.hovered() {
         ui.painter().line_segment(
@@ -348,10 +366,10 @@ pub fn link_button(ui: &mut Ui, text: &str) -> Response {
                 pos2(rect.left(), rect.bottom() - 1.0),
                 pos2(rect.right(), rect.bottom() - 1.0),
             ],
-            Stroke::new(1.0_f32, theme::LINK),
+            Stroke::new(1.0_f32, theme::link()),
         );
     }
-    ui.painter().galley(rect.min, galley, theme::LINK);
+    ui.painter().galley(rect.min, galley, theme::link());
     response
 }
 
@@ -365,11 +383,13 @@ pub fn switch(ui: &mut Ui, on: &mut bool) -> Response {
         response.mark_changed();
     }
     let t = ui.ctx().animate_bool_with_time(response.id, *on, 0.18);
+    let off = theme::ink_rgb();
+    let mix = |a: u8, b: u8| (a as f32 + (b as f32 - a as f32) * t).round() as u8;
     let track = Color32::from_rgba_unmultiplied(
-        (255.0 + (10.0 - 255.0) * t) as u8,
-        (255.0 + (132.0 - 255.0) * t) as u8,
-        255,
-        (0.14 * 255.0 + (255.0 - 0.14 * 255.0) * t) as u8,
+        mix(off[0], 10),
+        mix(off[1], 132),
+        mix(off[2], 255),
+        mix((0.14 * 255.0) as u8, 255),
     );
     ui.painter().rect_filled(rect, FULL, track);
     let x = rect.left() + 9.0 + 14.0 * t;
@@ -409,11 +429,11 @@ pub fn checkbox(ui: &mut Ui, on: &mut bool, label: &str) -> Response {
         ui.painter().rect_filled(boxed, radius, theme::ACCENT);
         icons::paint(ui, boxed, "checkmark", 10.0, W::Bold, Color32::WHITE);
     } else {
-        ui.painter().rect_filled(boxed, radius, white(0.1));
+        ui.painter().rect_filled(boxed, radius, ink(0.1));
         ui.painter().rect_stroke(
             boxed,
             radius,
-            Stroke::new(0.5_f32, white(0.2)),
+            Stroke::new(0.5_f32, ink(0.2)),
             StrokeKind::Inside,
         );
     }
@@ -421,7 +441,7 @@ pub fn checkbox(ui: &mut Ui, on: &mut bool, label: &str) -> Response {
         ui.painter().galley(
             pos2(boxed.right() + 6.0, rect.center().y - galley.size().y / 2.0),
             galley,
-            Color32::WHITE,
+            theme::ink(1.0),
         );
     }
     response
@@ -440,11 +460,11 @@ pub fn text_input_at(
     multiline: bool,
 ) -> Response {
     let radius = CornerRadius::same(6);
-    ui.painter().rect_filled(rect, radius, white(0.07));
+    ui.painter().rect_filled(rect, radius, ink(0.07));
     ui.painter().rect_stroke(
         rect,
         radius,
-        Stroke::new(0.5_f32, white(0.14)),
+        Stroke::new(0.5_f32, ink(0.14)),
         StrokeKind::Inside,
     );
     let edit = if multiline {
@@ -458,7 +478,7 @@ pub fn text_input_at(
         edit.frame(false)
             .margin(Margin::symmetric(7, if multiline { 5 } else { 3 }))
             .font(theme::font(13.0, W::Regular))
-            .text_color(Color32::WHITE)
+            .text_color(theme::ink(1.0))
             .vertical_align(if multiline { Align::TOP } else { Align::Center })
             .desired_width(rect.width())
             .hint_text(theme::rich(hint, 13.0, W::Regular, theme::tertiary())),
@@ -477,7 +497,7 @@ pub fn text_input_at(
 /// − and + in one bezel.
 pub fn stepper(ui: &mut Ui, value: &mut u32, min: u32, max: u32, step: u32) -> bool {
     let (rect, _) = ui.allocate_exact_size(vec2(44.0, 22.0), Sense::hover());
-    bezel(ui, rect, white(0.1));
+    bezel(ui, rect, ink(0.1));
     let mut changed = false;
     for (i, icon) in ["minus", "plus"].into_iter().enumerate() {
         let half = Rect::from_min_size(
@@ -488,7 +508,7 @@ pub fn stepper(ui: &mut Ui, value: &mut u32, min: u32, max: u32, step: u32) -> b
         let response = ui.interact(half, ui.id().with(("stepper", i)), Sense::click());
         if response.is_pointer_button_down_on() && enabled {
             ui.painter()
-                .rect_filled(half, CornerRadius::same(7), white(0.12));
+                .rect_filled(half, CornerRadius::same(7), ink(0.12));
         }
         icons::paint(
             ui,
@@ -516,7 +536,7 @@ pub fn stepper(ui: &mut Ui, value: &mut u32, min: u32, max: u32, step: u32) -> b
             pos2(rect.center().x, rect.top() + 4.0),
             pos2(rect.center().x, rect.bottom() - 4.0),
         ],
-        Stroke::new(1.0_f32, white(0.08)),
+        Stroke::new(1.0_f32, ink(0.08)),
     );
     changed
 }
@@ -530,10 +550,13 @@ pub fn segmented<T: PartialEq + Clone>(ui: &mut Ui, value: &mut T, options: &[(T
     let widths: Vec<f32> = galleys.iter().map(|g| g.size().x + 24.0).collect();
     let (rect, _) =
         ui.allocate_exact_size(vec2(widths.iter().sum::<f32>() + 2.0, 22.0), Sense::hover());
+    ui.painter().rect_filled(
+        rect.expand(0.5),
+        CornerRadius::same(7),
+        theme::black(if theme::dark() { 0.3 } else { 0.06 }),
+    );
     ui.painter()
-        .rect_filled(rect.expand(0.5), CornerRadius::same(7), theme::black(0.3));
-    ui.painter()
-        .rect_filled(rect, CornerRadius::same(7), white(0.08));
+        .rect_filled(rect, CornerRadius::same(7), ink(0.08));
     let mut x = rect.left() + 1.0;
     let mut changed = false;
     for (i, ((option, _), galley)) in options.iter().zip(galleys).enumerate() {
@@ -545,11 +568,16 @@ pub fn segmented<T: PartialEq + Clone>(ui: &mut Ui, value: &mut T, options: &[(T
                 CornerRadius::same(6),
                 theme::black(0.2),
             );
+            let selected = if theme::dark() {
+                ink(0.22)
+            } else {
+                Color32::WHITE
+            };
             ui.painter()
-                .rect_filled(slot, CornerRadius::same(6), white(0.22));
+                .rect_filled(slot, CornerRadius::same(6), selected);
         }
         ui.painter()
-            .galley(slot.center() - galley.size() / 2.0, galley, Color32::WHITE);
+            .galley(slot.center() - galley.size() / 2.0, galley, theme::ink(1.0));
         if response.clicked() && option != value {
             *value = option.clone();
             changed = true;
@@ -566,7 +594,7 @@ pub fn menu_frame() -> Frame {
         .fill(theme::menu_bg())
         .corner_radius(11)
         .inner_margin(Margin::same(5))
-        .stroke(Stroke::new(0.5_f32, white(0.14)))
+        .stroke(Stroke::new(0.5_f32, ink(0.14)))
         .shadow(egui::Shadow {
             offset: [0, 12],
             blur: 32,
@@ -628,11 +656,7 @@ pub fn menu_item(
         text,
     );
     if let Some(g) = shortcut_galley {
-        let c = if active {
-            white(0.75)
-        } else {
-            theme::tertiary()
-        };
+        let c = if active { ink(0.75) } else { theme::tertiary() };
         ui.painter().galley(
             pos2(
                 rect.right() - 10.0 - g.size().x,
@@ -655,7 +679,7 @@ pub fn menu_separator(ui: &mut Ui) {
             pos2(rect.left() + 10.0, rect.center().y),
             pos2(rect.right() - 10.0, rect.center().y),
         ],
-        Stroke::new(1.0_f32, white(0.1)),
+        Stroke::new(1.0_f32, ink(0.1)),
     );
 }
 
@@ -689,15 +713,15 @@ pub fn popup_button<T: PartialEq + Clone>(
         ui,
         rect,
         if response.is_pointer_button_down_on() {
-            white(0.16)
+            ink(0.16)
         } else {
-            white(0.1)
+            ink(0.1)
         },
     );
     ui.painter().galley(
         pos2(rect.left() + 9.0, rect.center().y - galley.size().y / 2.0),
         galley,
-        Color32::WHITE,
+        theme::ink(1.0),
     );
     icons::paint(
         ui,
@@ -728,7 +752,7 @@ pub fn popover_frame() -> Frame {
     Frame::new()
         .fill(theme::popover_bg())
         .corner_radius(14)
-        .stroke(Stroke::new(0.5_f32, white(0.14)))
+        .stroke(Stroke::new(0.5_f32, ink(0.14)))
         .shadow(egui::Shadow {
             offset: [0, 16],
             blur: 40,
@@ -778,7 +802,7 @@ pub fn popover(anchor: &Response, open: &mut bool, width: f32, add: impl FnOnce(
 
 pub fn sheet_frame() -> Frame {
     Frame::new()
-        .fill(theme::MATTE)
+        .fill(theme::matte())
         .corner_radius(18)
         .stroke(Stroke::new(1.0_f32, theme::stroke()))
         .shadow(egui::Shadow {
@@ -804,14 +828,14 @@ pub fn sheet(ctx: &egui::Context, id: &str, add: impl FnOnce(&mut Ui)) -> bool {
 pub fn slim_progress(ui: &mut Ui, fraction: Option<f32>, width: f32) {
     let (rect, _) = ui.allocate_exact_size(vec2(width, 4.0), Sense::hover());
     let radius = CornerRadius::same(2);
-    ui.painter().rect_filled(rect, radius, white(0.08));
+    ui.painter().rect_filled(rect, radius, ink(0.08));
     match fraction {
         Some(f) => {
             let w = (rect.width() * f.clamp(0.0, 1.0)).max(4.0);
             ui.painter().rect_filled(
                 Rect::from_min_size(rect.min, vec2(w, 4.0)),
                 radius,
-                Color32::WHITE,
+                theme::ink(1.0),
             );
         }
         None => {
@@ -823,7 +847,7 @@ pub fn slim_progress(ui: &mut Ui, fraction: Option<f32>, width: f32) {
                 pos2((left + w).min(rect.right()), rect.bottom()),
             );
             if bar.width() > 0.0 {
-                ui.painter().rect_filled(bar, radius, white(0.8));
+                ui.painter().rect_filled(bar, radius, ink(0.8));
             }
             ui.ctx().request_repaint();
         }
@@ -869,7 +893,7 @@ pub fn thumbnail(ui: &mut Ui, url: Option<&str>, width: f32, opacity: f32) -> Re
     let radius = (width * 0.08).max(6.0).round() as u8;
     let (rect, response) = ui.allocate_exact_size(size, Sense::hover());
     ui.painter()
-        .rect_filled(rect, CornerRadius::same(radius), white(0.05));
+        .rect_filled(rect, CornerRadius::same(radius), ink(0.05));
     icons::paint(
         ui,
         rect,
@@ -893,7 +917,7 @@ pub fn thumbnail(ui: &mut Ui, url: Option<&str>, width: f32, opacity: f32) -> Re
 /// A frame with the Mac's faint fill and hairline: info card, queue rows.
 pub fn card() -> Frame {
     Frame::new()
-        .fill(white(0.04))
+        .fill(ink(0.04))
         .stroke(Stroke::new(1.0_f32, theme::stroke()))
         .corner_radius(16)
 }
@@ -916,12 +940,12 @@ pub fn section(
         if let Some(header) = header {
             ui.horizontal(|ui| {
                 ui.add_space(10.0);
-                ui.label(theme::rich(header, 13.0, W::Semibold, white(0.85)));
+                ui.label(theme::rich(header, 13.0, W::Semibold, ink(0.85)));
             });
         }
         Frame::new()
-            .fill(white(0.04))
-            .stroke(Stroke::new(1.0_f32, white(0.06)))
+            .fill(ink(0.04))
+            .stroke(Stroke::new(1.0_f32, ink(0.06)))
             .corner_radius(10)
             .show(ui, |ui| {
                 ui.set_width(ui.available_width());
@@ -971,11 +995,11 @@ pub fn row(
     let mut y = rect.center().y - text_height / 2.0;
     let label_height = label.size().y;
     ui.painter()
-        .galley(pos2(rect.left() + 12.0, y), label, Color32::WHITE);
+        .galley(pos2(rect.left() + 12.0, y), label, theme::ink(1.0));
     if let Some(sub) = sub {
         y += label_height + 2.0;
         ui.painter()
-            .galley(pos2(rect.left() + 12.0, y), sub, Color32::WHITE);
+            .galley(pos2(rect.left() + 12.0, y), sub, theme::ink(1.0));
     }
     let mut child = ui.new_child(
         egui::UiBuilder::new()
@@ -1008,7 +1032,7 @@ fn separator(ui: &Ui, rect: Rect) {
             pos2(rect.left() + 12.0, rect.top()),
             pos2(rect.right() - 12.0, rect.top()),
         ],
-        Stroke::new(1.0_f32, white(0.06)),
+        Stroke::new(1.0_f32, ink(0.06)),
     );
 }
 pub fn switch_row(ui: &mut Ui, form: &mut Form, label: &str, on: &mut bool) -> bool {

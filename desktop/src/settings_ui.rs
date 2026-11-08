@@ -107,7 +107,7 @@ pub fn plain_field(ui: &mut Ui, value: &mut String, hint: &str, width: f32) {
         egui::TextEdit::singleline(value)
             .frame(false)
             .font(theme::font(13.0, W::Regular))
-            .text_color(Color32::WHITE)
+            .text_color(theme::ink(1.0))
             .horizontal_align(Align::RIGHT)
             .vertical_align(Align::Center)
             .hint_text(theme::rich(hint, 13.0, W::Regular, theme::tertiary())),
@@ -270,7 +270,7 @@ fn format(ui: &mut Ui, cx: &mut Context) {
                             .collect();
                         egui::Frame::new()
                             .fill(theme::black(0.15))
-                            .stroke(egui::Stroke::new(1.0_f32, theme::white(0.06)))
+                            .stroke(egui::Stroke::new(1.0_f32, theme::ink(0.06)))
                             .corner_radius(6)
                             .show(ui, |ui| {
                                 egui::ScrollArea::vertical()
@@ -288,7 +288,7 @@ fn format(ui: &mut Ui, cx: &mut Context) {
                                             let fill = if on {
                                                 theme::ACCENT
                                             } else if i % 2 == 1 {
-                                                theme::white(0.03)
+                                                theme::ink(0.03)
                                             } else {
                                                 Color32::TRANSPARENT
                                             };
@@ -298,7 +298,7 @@ fn format(ui: &mut Ui, cx: &mut Context) {
                                                 &f.id,
                                                 12.0,
                                                 W::Medium,
-                                                Color32::WHITE,
+                                                if on { Color32::WHITE } else { theme::ink(1.0) },
                                                 Some(70.0),
                                             );
                                             ui.painter().galley(
@@ -307,7 +307,7 @@ fn format(ui: &mut Ui, cx: &mut Context) {
                                                     rect.center().y - id.size().y / 2.0,
                                                 ),
                                                 id,
-                                                Color32::WHITE,
+                                                theme::ink(1.0),
                                             );
                                             let label = theme::line(
                                                 ui,
@@ -323,7 +323,7 @@ fn format(ui: &mut Ui, cx: &mut Context) {
                                                     rect.center().y - label.size().y / 2.0,
                                                 ),
                                                 label,
-                                                Color32::WHITE,
+                                                theme::ink(1.0),
                                             );
                                             if response.clicked() {
                                                 if on {

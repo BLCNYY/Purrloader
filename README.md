@@ -37,6 +37,7 @@ Free and open source · Mac, Windows and Linux · No account, no ads, no trackin
 - **Stays up to date by itself.** Sites change; Purrloader quietly keeps up.
 - **Fully local.** Downloads go straight from the site to your computer. Nothing passes through a server of ours.
 - **No tracking.** No analytics, no telemetry, no accounts.
+- **Light or dark.** Follows your system, or pick one in Settings.
 
 ## Install
 

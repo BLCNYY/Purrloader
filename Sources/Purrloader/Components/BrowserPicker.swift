@@ -39,7 +39,7 @@ struct BrowserPicker: View {
                         }
                         .font(.system(size: 13))
                         .padding(.horizontal, 10).frame(height: 28)
-                        .background(RoundedRectangle(cornerRadius: 7).fill(Color.white.opacity(0.05)))
+                        .background(RoundedRectangle(cornerRadius: 7).fill(Theme.ink.opacity(0.05)))
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
@@ -50,6 +50,5 @@ struct BrowserPicker: View {
         }
         .padding(14)
         .frame(width: 280)
-        .preferredColorScheme(.dark)
     }
 }

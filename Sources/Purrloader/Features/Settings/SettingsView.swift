@@ -108,10 +108,18 @@ private struct GeneralSettings: View {
     @AppStorage("clipboardAutofill") private var clipboardAutofill = true
     @AppStorage("notifications") private var notifications = true
     @AppStorage("showMenuBarIcon") private var showMenuBarIcon = true
+    @AppStorage(AppAppearance.storageKey) private var appearance: AppAppearance = .system
 
     var body: some View {
         @Bindable var manager = DownloadManager.shared
         Form {
+            Section {
+                Picker("Appearance", selection: $appearance) {
+                    ForEach(AppAppearance.allCases) { Text($0.title).tag($0) }
+                }
+                .pickerStyle(.segmented)
+                .onChange(of: appearance) { AppAppearance.apply() }
+            }
             Section {
                 LabeledContent("Save downloads to") {
                     HStack {
@@ -129,6 +137,6 @@ private struct GeneralSettings: View {
             }
         }
         .formStyle(.grouped)
-        .frame(width: 520, height: 300)
+        .frame(width: 520, height: 360)
     }
 }

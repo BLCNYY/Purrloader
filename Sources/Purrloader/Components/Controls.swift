@@ -18,12 +18,12 @@ struct PillSegment<Value: Hashable>: View {
                 } label: {
                     Text(title)
                         .font(.system(size: 13, weight: selected ? .semibold : .medium))
-                        .foregroundStyle(selected ? Color.black : Theme.secondary)
+                        .foregroundStyle(selected ? Theme.onInk : Theme.secondary)
                         .padding(.horizontal, 14)
                         .frame(height: height - 4)
                         .background {
                             if selected {
-                                Capsule().fill(.white).matchedGeometryEffect(id: "pill", in: namespace)
+                                Capsule().fill(Theme.ink).matchedGeometryEffect(id: "pill", in: namespace)
                             }
                         }
                         .contentShape(Capsule())
@@ -55,7 +55,7 @@ struct ChipLabel: View {
                 Image(systemName: "chevron.down").font(.system(size: 8, weight: .bold)).foregroundStyle(Theme.tertiary)
             }
         }
-        .foregroundStyle(.white.opacity(0.9))
+        .foregroundStyle(Theme.ink.opacity(0.9))
         .padding(.horizontal, 13)
         .frame(height: 32)
         .background(Capsule().fill(Theme.surface))
@@ -119,14 +119,16 @@ struct CircleButtonStyle: ButtonStyle {
         @State private var hovering = false
         @Environment(\.isEnabled) private var isEnabled
 
+        private var fillOpacity: Double {
+            configuration.isPressed ? 0.18 : hovering ? 0.12 : filled ? 0.06 : 0
+        }
+
         var body: some View {
             configuration.label
                 .font(.system(size: size * 0.42, weight: .semibold))
-                .foregroundStyle(.white.opacity(isEnabled ? 0.9 : 0.3))
+                .foregroundStyle(Theme.ink.opacity(isEnabled ? 0.9 : 0.3))
                 .frame(width: size, height: size)
-                .background(
-                    Circle().fill(.white.opacity(configuration.isPressed ? 0.18 : hovering ? 0.12 : filled ? 0.06 : 0))
-                )
+                .background(Circle().fill(Theme.ink.opacity(fillOpacity)))
                 .overlay(Circle().strokeBorder(filled ? Theme.stroke : .clear))
                 .contentShape(Circle())
                 .onHover { hovering = $0 }
@@ -147,10 +149,10 @@ struct PrimaryCapsuleStyle: ButtonStyle {
         var body: some View {
             configuration.label
                 .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(.black)
+                .foregroundStyle(Theme.onInk)
                 .padding(.horizontal, 18)
                 .frame(height: 32)
-                .background(Capsule().fill(.white.opacity(isEnabled ? 1 : 0.25)))
+                .background(Capsule().fill(Theme.ink.opacity(isEnabled ? 1 : 0.25)))
                 .scaleEffect(configuration.isPressed ? 0.97 : 1)
                 .animation(.easeOut(duration: 0.1), value: configuration.isPressed)
         }
@@ -160,12 +162,12 @@ struct PrimaryCapsuleStyle: ButtonStyle {
 /// Thin capsule progress bar; nil shows an indeterminate sweep.
 struct SlimProgress: View {
     let fraction: Double?
-    var tint: Color = .white
+    var tint: Color = Theme.ink
 
     var body: some View {
         GeometryReader { geo in
             ZStack(alignment: .leading) {
-                Capsule().fill(Color.white.opacity(0.08))
+                Capsule().fill(Theme.ink.opacity(0.08))
                 if let fraction {
                     Capsule().fill(tint)
                         .frame(width: max(4, geo.size.width * fraction))
@@ -192,10 +194,10 @@ struct SecondaryCapsuleStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.system(size: 12, weight: .semibold))
-            .foregroundStyle(.white.opacity(0.92))
+            .foregroundStyle(Theme.ink.opacity(0.92))
             .padding(.horizontal, 12)
             .frame(height: height)
-            .background(Capsule().fill(.white.opacity(configuration.isPressed ? 0.2 : 0.1)))
+            .background(Capsule().fill(Theme.ink.opacity(configuration.isPressed ? 0.2 : 0.1)))
             .overlay(Capsule().strokeBorder(Theme.stroke))
             .contentShape(Capsule())
     }
@@ -225,7 +227,7 @@ struct Thumbnail: View {
             Image(systemName: "play.fill").font(.system(size: width * 0.14)).foregroundStyle(Theme.tertiary)
         }
         .frame(width: width, height: width * 9 / 16)
-        .background(Color.white.opacity(0.05))
+        .background(Theme.ink.opacity(0.05))
         .clipShape(RoundedRectangle(cornerRadius: max(6, width * 0.08), style: .continuous))
         .accessibilityHidden(true)
     }

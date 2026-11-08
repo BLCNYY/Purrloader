@@ -5,6 +5,7 @@ import UserNotifications
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate, UNUserNotificationCenterDelegate {
     func applicationDidFinishLaunching(_ notification: Notification) {
+        AppAppearance.apply()
         UNUserNotificationCenter.current().delegate = self
         Task {
             await ToolManager.shared.bootstrap()

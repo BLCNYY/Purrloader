@@ -2,10 +2,9 @@ import AppKit
 import SwiftUI
 
 extension View {
-    /// Matte black at 80% over a 40px blur in a window; solid matte black in full screen.
+    /// The matte (black, or white in light mode) at 80% over a 40px blur in a window; solid in full screen.
     func purrloaderWindowStyle() -> some View {
         scrollContentBackground(.hidden)
-            .preferredColorScheme(.dark)
             .background {
                 if !WindowBlur.isAvailable {
                     VisualEffectBackground().overlay(Theme.matte.opacity(0.55)).ignoresSafeArea()
@@ -14,11 +13,10 @@ extension View {
             .background(WindowConfigurator())
     }
 
-    /// For sheets, which sit over the window: solid matte black.
+    /// For sheets, which sit over the window: the solid matte.
     func purrloaderSheetStyle() -> some View {
         scrollContentBackground(.hidden)
             .background(Theme.matte)
-            .preferredColorScheme(.dark)
     }
 }
 
@@ -34,7 +32,6 @@ private struct WindowConfigurator: NSViewRepresentable {
             guard let window else { return }
             window.isOpaque = false
             window.titlebarAppearsTransparent = true
-            window.appearance = NSAppearance(named: .darkAqua)
             apply(fullScreen: window.styleMask.contains(.fullScreen))
             NotificationCenter.default.addObserver(
                 self, selector: #selector(willEnterFullScreen),
@@ -52,7 +49,7 @@ private struct WindowConfigurator: NSViewRepresentable {
             if fullScreen {
                 window.backgroundColor = Theme.matteNS
             } else if WindowBlur.isAvailable {
-                window.backgroundColor = Theme.matteNS.withAlphaComponent(Theme.windowOpacity)
+                window.backgroundColor = Theme.translucentMatteNS
             } else {
                 window.backgroundColor = .clear
             }
