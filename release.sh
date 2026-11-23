@@ -58,3 +58,23 @@ if [[ -n "$IDENTITY" ]]; then
 fi
 
 echo "Built $DMG (Purrloader $VERSION)"
+
+# Points the Homebrew cask at this DMG. It's committed but not pushed, since the DMG isn't on GitHub yet.
+# Only notarized builds go to Homebrew.
+TAP="${PURRLOADER_TAP_DIR:-$(brew --repository 2>/dev/null)/Library/Taps/blcnyy/homebrew-tap}"
+CASK="$TAP/Casks/purrloader.rb"
+if [[ -z "$IDENTITY" || -z "$PROFILE" ]]; then
+    warn "Not updating the Homebrew cask: this DMG isn't notarized."
+elif [[ ! -f "$CASK" ]]; then
+    warn "Not updating the Homebrew cask: $CASK not found (brew tap blcnyy/tap, or set PURRLOADER_TAP_DIR)."
+else
+    SHA="$(shasum -a 256 "$DMG" | cut -d' ' -f1)"
+    sed -i '' -E "s/^  version \".*\"/  version \"$VERSION\"/; s/^  sha256 \".*\"/  sha256 \"$SHA\"/" "$CASK"
+    if git -C "$TAP" diff --quiet; then
+        echo "Homebrew cask already at $VERSION."
+    else
+        git -C "$TAP" commit -q -m "purrloader $VERSION" -- Casks/purrloader.rb
+        echo "Committed purrloader $VERSION to $TAP."
+        echo "After uploading $DMG to the v$VERSION release, run: git -C \"$TAP\" push"
+    fi
+fi

@@ -43,6 +43,14 @@ Downloads go straight from the site to your computer. On first launch Purrloader
 [Download Purrloader.dmg](https://github.com/BLCNYY/Purrloader/releases/latest/download/Purrloader.dmg), open it and
 drag Purrloader into Applications. Needs macOS 15 or later, on Apple Silicon or Intel.
 
+Or install it with [Homebrew](https://brew.sh):
+
+```sh
+brew tap blcnyy/tap
+brew trust --cask blcnyy/tap/purrloader
+brew install --cask purrloader
+```
+
 ### Windows
 
 Download [Purrloader-Setup-x64.exe](https://github.com/BLCNYY/Purrloader/releases/latest/download/Purrloader-Setup-x64.exe),
